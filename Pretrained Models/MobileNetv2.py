@@ -18,7 +18,7 @@ class FeatureExtractorMobileNet(nn.Module):
         x = self.fe(x)
         return x
 
-def preprocess_image(image_path):
+def preprocess_image(image_path): # TENIM MATEIX FUNCIÓ LARA I MERI
     # Define preprocessing transforms
     preprocess = transforms.Compose([
         transforms.Resize((224, 224)),  # Resize image to MobileNetV2's input size
