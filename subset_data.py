@@ -9,8 +9,8 @@ import shutil
 #zip_cropped_Miguel = ["C:/Users/migue/OneDrive/Escritorio/UAB INTELIGENCIA ARTIFICIAL/Tercer Any/3A/Vision and Learning/Challenge 2/Cropped.zip"]
 
 #zip_annot_Lara = [""]
-zip_annot_Meri = ["C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/CrossValidation.zip/CrossValidation/Annotated.zip"]
-#zip_annot_Miguel = ["C:/Users/migue/OneDrive/Escritorio/UAB INTELIGENCIA ARTIFICIAL/Tercer Any/3A/Vision and Learning/Challenge 2/Annotated.zip"]
+#zip_annot_Meri = ["C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/CrossValidation.zip/CrossValidation/Annotated.zip"]
+zip_annot_Miguel = ["C:/Users/migue/OneDrive/Escritorio/UAB INTELIGENCIA ARTIFICIAL/Tercer Any/3A/Vision and Learning/Challenge 2/Annotated.zip"]
 
 ''' # INICI DEL UNZIP (LARA)
 with zipfile.ZipFile(zip_path, 'r') as zip_file:
@@ -47,25 +47,8 @@ def extract_nested_zip(zip_path, extract_to):
                 outer_zip.extract(item, extract_to)
 
 # Extract files for each user
-for zip_path in zip_annot_Meri:
+for zip_path in zip_annot_Miguel:
     if zip_path:  # Ensure path is not empty
         print(f'Extracting {zip_path}...')
         extract_nested_zip(zip_path, extraction_dir)
 
-# Create subset directory if it doesn’t exist
-os.makedirs(subset_dir, exist_ok=True)
-
-# List all files in the extraction directory
-all_files = [os.path.join(extraction_dir, file) for file in os.listdir(extraction_dir) if os.path.isfile(os.path.join(extraction_dir, file))]
-
-# Calculate the number of files to sample for the subset
-subset_size = int(len(all_files) * subset_fraction)
-
-# Randomly sample files
-subset_files = random.sample(all_files, subset_size)
-
-# Copy sampled files to subset directory
-for file_path in subset_files:
-    shutil.copy(file_path, subset_dir)
-
-print(f'{len(subset_files)} files copied to {subset_dir}.')
