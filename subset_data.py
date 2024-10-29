@@ -3,11 +3,6 @@
 #zip_cropped_Meri = ["C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/CrossValidation.zip/CrossValidation/Cropped.zip"]
 #zip_cropped_Miguel = ["C:/Users/migue/OneDrive/Escritorio/UAB INTELIGENCIA ARTIFICIAL/Tercer Any/3A/Vision and Learning/Challenge 2/Cropped.zip"]
 
-#zip_annot_Lara = [""]
-#zip_annot_Meri = ["C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/CrossValidation.zip/CrossValidation/Annotated.zip"]
-zip_annot_Miguel = ["C:/Users/migue/OneDrive/Escritorio/UAB INTELIGENCIA ARTIFICIAL/Tercer Any/3A/Vision and Learning/Challenge 2/Annotated.zip"]
-
-''' # INICI DEL UNZIP (LARA)
 # INICI DEL UNZIP (LARA)
 with zipfile.ZipFile(zip_path, 'r') as zip_file:
         for file_name in zip_file.namelist():
@@ -25,7 +20,6 @@ import shutil
 # Path to CrossValidation.zip
 crossvalidation_zip_path = "C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/CrossValidation.zip"
 extraction_dir = 'C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/EXTRACT'
-subset_fraction = 0.1  # Fraction of dataset to sample, e.g., 10%
 
 # Step 1: Extract CrossValidation.zip and locate Annotated.zip within it
 def extract_crossvalidation_zip(cross_zip_path, extract_to):
@@ -56,13 +50,5 @@ def extract_nested_zip(zip_path, extract_to):
             else:
                 outer_zip.extract(item, extract_to)
 
-# Extract files for each user
-for zip_path in zip_annot_Miguel:
-    if zip_path:  # Ensure path is not empty
-        print(f'Extracting {zip_path}...')
-        extract_nested_zip(zip_path, extraction_dir)
-
-
 # Step 3: Extract CrossValidation.zip, and within it, Annotated.zip
 extract_crossvalidation_zip(crossvalidation_zip_path, extraction_dir)
-
