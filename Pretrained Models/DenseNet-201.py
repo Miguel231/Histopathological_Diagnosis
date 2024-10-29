@@ -18,7 +18,7 @@ config = {
     'unfreeze_layers': False    # Set True to unfreeze specific model layers
 }
 
-# Step 1: Function to Load and Transform Images from ZIP
+# Step 1: Function to Load and Transform Images from ZIP (IGUAL PER TOTS ELS MODELS)
 def load_images_from_zip(zip_path, transform, label_fn):
     images = []
     labels = []
@@ -31,7 +31,7 @@ def load_images_from_zip(zip_path, transform, label_fn):
                     labels.append(label_fn(file_name))
     return images, labels
 
-# Step 2: Transformation Function
+# Step 2: Transformation Function (IGUAL PER TOTS ELS MODELS)
 def get_transform():
     return transforms.Compose([
         transforms.Resize((224, 224)),
@@ -105,7 +105,7 @@ def get_optimizer(config, model):
     elif config['optimizer'] == 'adamw':
         return torch.optim.AdamW(model.classifier.parameters(), lr=config['learning_rate'], weight_decay=1e-4)
 
-# Step 7: Training Function
+# Step 7: Training Function 
 def train_model(model, dataloader, criterion, optimizer, device, num_epochs=10):
     model.to(device)
     for epoch in range(num_epochs):
