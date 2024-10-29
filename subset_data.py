@@ -52,4 +52,3 @@ def extract_nested_zip(zip_path, extract_to):
 
 # Step 3: Extract CrossValidation.zip, and within it, Annotated.zip
 extract_crossvalidation_zip(crossvalidation_zip_path, extraction_dir)
-
