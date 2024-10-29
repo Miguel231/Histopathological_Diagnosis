@@ -1,25 +1,18 @@
-'''
 #zip_cropped_Lara = ["CrossValidation/Cropped.zip"]
 #zip_cropped_Meri = ["C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/CrossValidation.zip/CrossValidation/Cropped.zip"]
 #zip_cropped_Miguel = ["C:/Users/migue/OneDrive/Escritorio/UAB INTELIGENCIA ARTIFICIAL/Tercer Any/3A/Vision and Learning/Challenge 2/Cropped.zip"]
-
-# INICI DEL UNZIP (LARA)
-with zipfile.ZipFile(zip_path, 'r') as zip_file:
-        for file_name in zip_file.namelist():
-            with zip_file.open(file_name) as file
-                with zipfile.ZipFile(file, 'r') as zip_file:
-                    if file_name.endswith('.zip'):
-                        with zip_file.open(file_name) as file:
-'''
 
 import zipfile
 import os
 import random
 import shutil
 
+crossvalidation_zip_path = "C:/Users/larar/OneDrive/Documentos/Escritorio/CHALLENGE#2_VISION/CrossValidation.zip"
+extraction_dir = "C:/Users/larar/OneDrive/Documentos/Escritorio/CHALLENGE#2_VISION/EXTRACT"
+
 # Path to CrossValidation.zip
-crossvalidation_zip_path = "C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/CrossValidation.zip"
-extraction_dir = 'C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/EXTRACT'
+#crossvalidation_zip_path = "C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/CrossValidation.zip"
+#extraction_dir = 'C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/EXTRACT'
 
 # Step 1: Extract CrossValidation.zip and locate Annotated.zip within it
 def extract_crossvalidation_zip(cross_zip_path, extract_to):
