@@ -105,7 +105,7 @@ def get_optimizer(config, model):
     elif config['optimizer'] == 'adamw':
         return torch.optim.AdamW(model.classifier.parameters(), lr=config['learning_rate'], weight_decay=1e-4)
 
-# Step 7: Training Function
+# Step 7: Training Function 
 def train_model(model, dataloader, criterion, optimizer, device, num_epochs=10):
     model.to(device)
     for epoch in range(num_epochs):
