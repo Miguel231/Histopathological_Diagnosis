@@ -20,7 +20,6 @@ import shutil
 # Path to CrossValidation.zip
 crossvalidation_zip_path = "C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/CrossValidation.zip"
 extraction_dir = 'C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/EXTRACT'
-subset_fraction = 0.1  # Fraction of dataset to sample, e.g., 10%
 
 # Step 1: Extract CrossValidation.zip and locate Annotated.zip within it
 def extract_crossvalidation_zip(cross_zip_path, extract_to):

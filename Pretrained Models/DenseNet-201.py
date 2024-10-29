@@ -10,11 +10,11 @@ import random
 # Configurations for the model
 config = {
     'model': 'densenet201',     # Options: 'densenet201', 'resnet50', 'mobilenet_v2'
-    'activation': 'relu',       # Options: 'relu', 'tanh', 'leaky_relu'
-    'num_units': [1024, 512],   # Fully connected layer sizes
+    'activation': 'relu',       # Options: 'relu', 'tanh', 'leaky_relu', relu6 or swish?
+    'num_units': [1024, 512],    # Fully connected layer sizes, [1024, 512, 256]
     'loss_fn': 'bce',           # Options: 'bce', 'bce_logits', 'focal'
-    'optimizer': 'adam',        # Options: 'adam', 'sgd', 'adamw', 'rmsprop'
-    'learning_rate': 0.001,
+    'optimizer': 'adam',        # Options: 'adam', 'sgd', 'adamw', 'rmsprop', 'adamw'
+    'learning_rate': 0.001,     # 0.01 or 0.05
     'unfreeze_layers': False    # Set True to unfreeze specific model layers
 }
 
