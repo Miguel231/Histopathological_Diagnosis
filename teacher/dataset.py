@@ -8,32 +8,44 @@ class TripletDataset():
         self.transform = transform
         self.path = path
         if self.is_train:
-            self.images = df.iloc[:, 1].values
-            self.labels = df.iloc[:, 2].values
+            self.images = df.iloc[:, 1].values  # Assumes image filenames are in the second column
+            self.labels = df.iloc[:, 2].values  # Assumes labels are in the third column
             self.index = df.index.values 
+            
     def __len__(self):
         return len(self.images)
+    
     def __getitem__(self, item):
-        anchor_image_folder, anchor_image_name = self.images[item].split('.')
-        anchor_image_path = self.path + '/' + anchor_image_folder + '/' + anchor_image_name + '.png'
-        ###### Anchor Image #######
+        # Construct the path for the anchor image
+        anchor_image_name = self.images[item]
+        anchor_image_path = f"{self.path}/{anchor_image_name}"
+        
+        # Load the anchor image
         anchor_img = Image.open(anchor_image_path).convert('RGB')
+        
         if self.is_train:
+            # Get the label for the anchor image
             anchor_label = self.labels[item]
-            positive_list = self.index[self.index!=item][self.labels[self.index!=item]==anchor_label]
+            
+            # Find a positive example with the same label, excluding the anchor
+            positive_list = self.index[(self.index != item) & (self.labels == anchor_label)]
             positive_item = random.choice(positive_list)
-            positive_image_folder, positive_image_name = self.images[positive_item].split('.')
-            positive_image_path = self.path + '/' + positive_image_folder + '/' + positive_image_name + '.png'
+            positive_image_name = self.images[positive_item]
+            positive_image_path = f"{self.path}/{positive_image_name}"
             positive_img = Image.open(positive_image_path).convert('RGB')
-            #positive_img = self.images[positive_item].reshape(28, 28, 1)
-            negative_list = self.index[self.index!=item][self.labels[self.index!=item]!=anchor_label]
+            
+            # Find a negative example with a different label
+            negative_list = self.index[(self.index != item) & (self.labels != anchor_label)]
             negative_item = random.choice(negative_list)
-            negative_negative_folder, negative_image_name = self.images[negative_item].split('.')
-            negative_image_path = self.path + '/' + negative_negative_folder + '/' + negative_image_name + '.png'
+            negative_image_name = self.images[negative_item]
+            negative_image_path = f"{self.path}/{negative_image_name}"
             negative_img = Image.open(negative_image_path).convert('RGB')
-            #negative_img = self.images[negative_item].reshape(28, 28, 1)
-            if self.transform!=None:
+            
+            # Apply transformations if provided
+            if self.transform is not None:
                 anchor_img = self.transform(anchor_img)
-                positive_img = self.transform(positive_img)                   
+                positive_img = self.transform(positive_img)
                 negative_img = self.transform(negative_img)
+                
+        # Return the triplet (anchor, positive, negative) and the anchor label
         return anchor_img, positive_img, negative_img, anchor_label

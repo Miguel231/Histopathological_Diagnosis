@@ -19,8 +19,8 @@ from sklearn.preprocessing import StandardScaler
 from model import ResNet_Triplet
 from tqdm import tqdm
 
-train_data_path = 'Data/AnnotatedPatches'
-train_data = pd.read_csv('Data/window_metadata_sampled.csv') ## add in ours a csv with the resulting files from USABLE
+train_data_path = 'C:/Users/larar/OneDrive/Documentos/Escritorio/CHALLENGE#2_VISION/USABLE'
+train_data = pd.read_csv('C:/Users/larar/OneDrive/Documentos/Escritorio/Histopathological_Diagnosis-3/TRAIN_DATA.csv') ## add in ours a csv with the resulting files from USABLE
 train_set, test_set = train_test_split(train_data, test_size=0.1, random_state=42)
 
 def get_train_dataset(IMAGE_SIZE=256):
@@ -38,10 +38,10 @@ IMAGE_SIZE = 28
 BATCH_SIZE = 64
 DEVICE = get_device()
 LEARNING_RATE = 0.001
-EPOCHS = 200
+EPOCHS = 2
 
-train_dataset = get_train_dataset(IMAGE_SIZE = IMAGE_SIZE)
-train_dl = DataLoader(train_dataset,batch_size=BATCH_SIZE,shuffle=True)
+#train_dataset = get_train_dataset(IMAGE_SIZE = IMAGE_SIZE)
+train_dl = DataLoader(train_data_path,batch_size=BATCH_SIZE,shuffle=True)
 
 ResNet = ResNet_Triplet()
 ResNet = ResNet.to(DEVICE)
