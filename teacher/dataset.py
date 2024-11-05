@@ -20,7 +20,7 @@ class TripletDataset():
     def __getitem__(self, item):
         # Construct the path for the anchor image using both Pat_ID and Windows_ID
         patient_id = self.patients[item]
-        window_id = self.images[item]
+        window_id = str(self.images[item]).zfill(5)
         anchor_image_path = os.path.join(self.path, f"{patient_id}_{window_id}")  # Adjust extension if needed
 
         if not os.path.exists(anchor_image_path):
