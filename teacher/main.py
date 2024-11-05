@@ -19,7 +19,7 @@ from sklearn.preprocessing import StandardScaler
 from model import ResNet_Triplet
 from tqdm import tqdm
 
-train_data_path = 'C:/Users/larar/OneDrive/Documentos/Escritorio/CHALLENGE#2_VISION/USABLE'
+train_data_path = r'C:/Users/larar/OneDrive/Documentos/Escritorio/CHALLENGE#2_VISION/USABLE'
 train_data = pd.read_csv('C:/Users/larar/OneDrive/Documentos/Escritorio/Histopathological_Diagnosis-3/TRAIN_DATA.csv')
 train_set, test_set = train_test_split(train_data, test_size=0.1, random_state=42)
 
