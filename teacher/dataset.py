@@ -21,7 +21,7 @@ class TripletDataset():
         # Construct the path for the anchor image using both Pat_ID and Windows_ID
         patient_id = self.patients[item]
         window_id = str(self.images[item]).zfill(5)
-        anchor_image_path = os.path.join(self.path, f"{patient_id}_{window_id}")  # Adjust extension if needed
+        anchor_image_path = os.path.join(self.path, f"{patient_id}_{window_id}.png")  # Adjust extension if needed
 
         if not os.path.exists(anchor_image_path):
             raise FileNotFoundError(f"Image file not found: {anchor_image_path}")
@@ -37,7 +37,7 @@ class TripletDataset():
             positive_item = random.choice(positive_list)
             positive_patient_id = self.patients[positive_item]
             positive_window_id = self.images[positive_item]
-            positive_image_path = os.path.join(self.path, f"{positive_patient_id}_{positive_window_id}.jpg")
+            positive_image_path = os.path.join(self.path, f"{positive_patient_id}_{positive_window_id}.png")
 
             if not os.path.exists(positive_image_path):
                 raise FileNotFoundError(f"Image file not found: {positive_image_path}")

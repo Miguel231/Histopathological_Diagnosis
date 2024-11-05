@@ -47,7 +47,6 @@ optimizer = torch.optim.Adam(ResNet.parameters(), lr=LEARNING_RATE)
 criterion = TripletLoss()
 losses_train = []
 losses_val = []
-
 for epoch in tqdm(range(EPOCHS), desc='Epochs'):
     ResNet.train()
     loss_acum = []
