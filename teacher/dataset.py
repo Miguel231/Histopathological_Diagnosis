@@ -55,14 +55,15 @@ class TripletDataset:
                 positive_list = positive_list[positive_list != positive_item]
                 continue  # Retry with a new sample if out of bounds
 
-            positive_patient_id = self.patients[positive_item]
-            positive_window_id = str(self.images[positive_item]).zfill(5)
-            positive_image_path = os.path.join(self.path, f"{positive_patient_id}_{positive_window_id}.png")
+            else:
+                positive_patient_id = self.patients[positive_item]
+                positive_window_id = str(self.images[positive_item]).zfill(5)
+                positive_image_path = os.path.join(self.path, f"{positive_patient_id}_{positive_window_id}.png")
 
-            if not os.path.exists(positive_image_path):
-                print(f"Warning: Positive image file not found: {positive_image_path}. Retrying...")
-                positive_list = positive_list[positive_list != positive_item]
-                continue
+                if not os.path.exists(positive_image_path):
+                    print(f"Warning: Positive image file not found: {positive_image_path}. Retrying...")
+                    positive_list = positive_list[positive_list != positive_item]
+                    continue
 
             return Image.open(positive_image_path).convert('RGB'), positive_image_path
 
@@ -80,14 +81,14 @@ class TripletDataset:
                 print(f"Warning: Negative index {negative_item} out of bounds. Retrying...")
                 negative_list = negative_list[negative_list != negative_item]
                 continue  # Retry with a new sample if out of bounds
+            else: 
+                negative_patient_id = self.patients[negative_item]
+                negative_window_id = str(self.images[negative_item]).zfill(5)
+                negative_image_path = os.path.join(self.path, f"{negative_patient_id}_{negative_window_id}.png")
 
-            negative_patient_id = self.patients[negative_item]
-            negative_window_id = str(self.images[negative_item]).zfill(5)
-            negative_image_path = os.path.join(self.path, f"{negative_patient_id}_{negative_window_id}.png")
-
-            if not os.path.exists(negative_image_path):
-                print(f"Warning: Negative image file not found: {negative_image_path}. Retrying...")
-                negative_list = negative_list[negative_list != negative_item]
-                continue
+                if not os.path.exists(negative_image_path):
+                    print(f"Warning: Negative image file not found: {negative_image_path}. Retrying...")
+                    negative_list = negative_list[negative_list != negative_item]
+                    continue
 
             return Image.open(negative_image_path).convert('RGB'), negative_image_path

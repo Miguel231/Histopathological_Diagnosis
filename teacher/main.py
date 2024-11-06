@@ -36,7 +36,7 @@ IMAGE_SIZE = 28
 BATCH_SIZE = 64
 DEVICE = get_device()
 LEARNING_RATE = 0.001
-EPOCHS = 2
+EPOCHS = 4
 
 train_dataset = get_train_dataset(IMAGE_SIZE=IMAGE_SIZE)
 train_dl = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)  # Use train_dataset here
