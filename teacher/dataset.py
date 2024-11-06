@@ -19,60 +19,75 @@ class TripletDataset:
         return len(self.images)
 
     def __getitem__(self, item):
-        # Construct the path for the anchor image using both Pat_ID and Windows_ID
         patient_id = self.patients[item]
         window_id = str(self.images[item]).zfill(5)
-        anchor_image_path = os.path.join(self.path, f"{patient_id}_{window_id}.png")  # Adjust extension if needed
+        anchor_image_path = os.path.join(self.path, f"{patient_id}_{window_id}.png")
         
-        # Check if the anchor image exists
         if not os.path.exists(anchor_image_path):
             print(f"Warning: Anchor image file not found: {anchor_image_path}")
-            raise FileNotFoundError(f"Image file not found: {anchor_image_path}")
-
-        # Load the anchor image
-        anchor_img = Image.open(anchor_image_path).convert('RGB')
+            return self.__getitem__(random.randint(0, len(self) - 1))
         
-        if self.is_train:
-            anchor_label = self.labels[item]
-            print("anchor", anchor_label)
-            # Find a positive example with the same label, excluding the anchor
-            positive_list = self.index[(self.index != item) & (self.labels == anchor_label)]
-            positive_item = random.choice(positive_list)
-            positive_patient_id = self.patients[positive_item]
-            positive_window_id = self.images[positive_item]
-            positive_image_path = os.path.join(self.path, f"{positive_patient_id}_{positive_window_id}")
+        anchor_img = Image.open(anchor_image_path).convert('RGB')
+        anchor_label = self.labels[item]
+        
+        positive_img, positive_image_path = self._get_positive_sample(item, anchor_label)
+        negative_img, negative_image_path = self._get_negative_sample(item, anchor_label)
 
-            # Check if the positive image exists
-            if not os.path.exists(positive_image_path):
-                print(f"Warning: Positive image file not found: {positive_image_path}")
-                raise FileNotFoundError(f"Image file not found: {positive_image_path}")
-
-            positive_img = Image.open(positive_image_path).convert('RGB')
-
-            # Find a negative example with a different label
-            negative_list = self.index[(self.index != item) & (self.labels != anchor_label)]
-            negative_item = random.choice(negative_list)
-            negative_patient_id = self.patients[negative_item]
-            negative_window_id = self.images[negative_item]
-            negative_image_path = os.path.join(self.path, f"{negative_patient_id}_{negative_window_id}")  # Ensure consistent extension
-
-            # Check if the negative image exists
-            if not os.path.exists(negative_image_path):
-                print(f"Warning: Negative image file not found: {negative_image_path}")
-                raise FileNotFoundError(f"Image file not found: {negative_image_path}")
-
-            negative_img = Image.open(negative_image_path).convert('RGB')
-
-            # Apply transformations if provided
-            if self.transform is not None:
-                anchor_img = self.transform(anchor_img)
-                positive_img = self.transform(positive_img)
-                negative_img = self.transform(negative_img)
-
-            return anchor_img, positive_img, negative_img, anchor_label
-
-        # If not in training mode, only return the anchor image and its label
         if self.transform is not None:
             anchor_img = self.transform(anchor_img)
+            positive_img = self.transform(positive_img)
+            negative_img = self.transform(negative_img)
 
-        return anchor_img, anchor_label
+        return anchor_img, positive_img, negative_img, anchor_label
+
+    def _get_positive_sample(self, item, anchor_label):
+        positive_list = self.index[(self.index != item) & (self.labels == anchor_label)]
+        
+        # Retry until a valid positive item is found
+        while True:
+            if len(positive_list) == 0:
+                raise ValueError(f"No positive sample found for anchor label {anchor_label} at index {item}")
+
+            positive_item = random.choice(positive_list)
+            
+            if positive_item >= len(self.patients):
+                print(f"Warning: Positive index {positive_item} out of bounds. Retrying...")
+                positive_list = positive_list[positive_list != positive_item]
+                continue  # Retry with a new sample if out of bounds
+
+            positive_patient_id = self.patients[positive_item]
+            positive_window_id = str(self.images[positive_item]).zfill(5)
+            positive_image_path = os.path.join(self.path, f"{positive_patient_id}_{positive_window_id}.png")
+
+            if not os.path.exists(positive_image_path):
+                print(f"Warning: Positive image file not found: {positive_image_path}. Retrying...")
+                positive_list = positive_list[positive_list != positive_item]
+                continue
+
+            return Image.open(positive_image_path).convert('RGB'), positive_image_path
+
+    def _get_negative_sample(self, item, anchor_label):
+        negative_list = self.index[(self.index != item) & (self.labels != anchor_label)]
+        
+        # Retry until a valid negative item is found
+        while True:
+            if len(negative_list) == 0:
+                raise ValueError(f"No negative sample found for anchor label {anchor_label} at index {item}")
+
+            negative_item = random.choice(negative_list)
+            
+            if negative_item >= len(self.patients):
+                print(f"Warning: Negative index {negative_item} out of bounds. Retrying...")
+                negative_list = negative_list[negative_list != negative_item]
+                continue  # Retry with a new sample if out of bounds
+
+            negative_patient_id = self.patients[negative_item]
+            negative_window_id = str(self.images[negative_item]).zfill(5)
+            negative_image_path = os.path.join(self.path, f"{negative_patient_id}_{negative_window_id}.png")
+
+            if not os.path.exists(negative_image_path):
+                print(f"Warning: Negative image file not found: {negative_image_path}. Retrying...")
+                negative_list = negative_list[negative_list != negative_item]
+                continue
+
+            return Image.open(negative_image_path).convert('RGB'), negative_image_path
