@@ -81,7 +81,7 @@ for epoch in tqdm(range(EPOCHS), desc='Epochs'):
     losses_val.append(np.mean(loss.cpu().detach().numpy()))
     print(f'Epoch: {epoch + 1}/{EPOCHS} — Loss: {np.mean(loss_acum):.4f}')
 
-# Visualizing embeddings with t-SNE
+"""# Visualizing embeddings with t-SNE
 embeddings = ResNet.Feature_Extractor(anchor_img)
 tsne = TSNE(n_components=2, random_state=42)
 embeddings_2d = tsne.fit_transform(embeddings.detach().numpy())
@@ -90,4 +90,4 @@ plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], c=anchor_label.detach().to
 plt.title('t-SNE Visualization of 64-Dimensional Embeddings')
 plt.colorbar()
 plt.show()
-print("DONE FINAL")
+print("DONE FINAL")"""

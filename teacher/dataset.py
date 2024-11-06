@@ -41,7 +41,7 @@ class TripletDataset:
         return anchor_img, positive_img, negative_img, anchor_label
 
     def _get_positive_sample(self, item, anchor_label):
-        positive_list = self.index[(self.index != item) & (self.labels == anchor_label)]
+        positive_list = self.index[self.index!=item][self.labels[self.index!=item]==anchor_label]
         
         # Retry until a valid positive item is found
         while True:
@@ -67,7 +67,7 @@ class TripletDataset:
             return Image.open(positive_image_path).convert('RGB'), positive_image_path
 
     def _get_negative_sample(self, item, anchor_label):
-        negative_list = self.index[(self.index != item) & (self.labels != anchor_label)]
+        negative_list = self.index[self.index!=item][self.labels[self.index!=item]!=anchor_label]
         
         # Retry until a valid negative item is found
         while True:
