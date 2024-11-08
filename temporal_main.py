@@ -130,7 +130,7 @@ dataset = StandardImageDataset(annotations_file, img_list, transform=transform)
 print("FINISH STANDARD DATASET")
 # Use DataLoader for batching
 print("START DATALOADER")
-data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
+data_loader = DataLoader(dataset, batch_size=500, shuffle=True)
 print("FINISH DATALOADER")
 
 
@@ -213,7 +213,7 @@ for epoch in range(epochs):
     i = 0
     for (image, label) in data_loader:
         image, label = image.to(device), label.to(device)  # Move to device (GPU/CPU)
-        print(f"GO {i}")
+        #print(f"GO {i}")
         # Zero the gradients, forward pass, and calculate the loss
         optimizer.zero_grad()
         
