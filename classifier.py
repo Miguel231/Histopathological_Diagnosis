@@ -44,21 +44,26 @@ def load_densenet201_parameters(filename="densenet201_params.npz"):
     
     return model, num_features
 
+import torch
+import torch.nn as nn
+from torchvision import models
+from collections import OrderedDict
+
 class CustomResNetModel(nn.Module):
     def __init__(self, embedding_dim, fc_layers, activations, batch_norms, dropout=0.25, pretrained_params=None, num_classes=2):
         super(CustomResNetModel, self).__init__()
-
+        
         # Load DenseNet201 with pretrained parameters if specified
         if pretrained_params:
             self.model, self.densenet_channels = load_densenet201_parameters(pretrained_params)
         else:
-            self.model = models.densenet201(pretrained=True)
-            self.densenet_channels = self.model.classifier.in_features
-            self.model.classifier = nn.Identity()
+            self.model = models.densenet201(pretrained=True)  # Use pre-trained DenseNet
+            self.densenet_channels = self.model.classifier.in_features  # Get the number of features from DenseNet201
+            self.model.classifier = nn.Identity()  # Remove the final classifier
 
         # Embedding layer setup
         if embedding_dim is not None:
-            self.embedding = nn.Linear(self.densenet_channels, embedding_dim)
+            self.embedding = nn.Linear(self.densenet_channels, embedding_dim)  # If embedding is specified, reduce dimensionality
             self.in_features = embedding_dim
         else:
             self.embedding = None
@@ -66,23 +71,52 @@ class CustomResNetModel(nn.Module):
 
         # Define fully connected layers
         self.fc_block = self.build_fc_block(self.in_features, fc_layers, activations, batch_norms, dropout)
-
+        
         # Final classifier layer (output logits for classification)
-        self.classifier = nn.Linear(fc_layers[-1], num_classes)
+        self.classifier = nn.Linear(fc_layers[-1], num_classes)  # Assuming the last layer in fc_layers is the output size
 
+    def build_fc_block(self, in_features, fc_layers, activations, batch_norms, dropout):
+        layers = OrderedDict()  # Sequential layer builder
+        
+        # Add layers to Sequential
+        input_dim = in_features
+        for i, output_dim in enumerate(fc_layers):
+            # Fully connected layer
+            layers[f'fc{i+1}'] = nn.Linear(input_dim, output_dim)
+            
+            # Activation function
+            if activations[i] == 'relu':
+                layers[f'relu{i+1}'] = nn.ReLU(inplace=True)
+            elif activations[i] == 'tanh':
+                layers[f'tanh{i+1}'] = nn.Tanh()
+            elif activations[i] == 'relu6':
+                layers[f'relu6{i+1}'] = nn.ReLU6(inplace=True)
+            
+            # Batch normalization if specified
+            if batch_norms[i] == 'batch':
+                layers[f'batchnorm{i+1}'] = nn.BatchNorm1d(output_dim)
+            
+            # Dropout layer
+            layers[f'dropout{i+1}'] = nn.Dropout(dropout)
+            
+            # Update input_dim for next layer
+            input_dim = output_dim
+
+        return nn.Sequential(layers)
+    
     def forward(self, x):
         # Forward through DenseNet backbone (without classifier)
         x = self.model(x)
-        x = torch.flatten(x, 1)
-
+        x = torch.flatten(x, 1)  # Flatten the output from DenseNet
+        
         # Forward through embedding layer if defined
         if self.embedding is not None:
             x = self.embedding(x)
-
+        
         # Forward through FC block
         x = self.fc_block(x)
-
+        
         # Forward through final classifier to get logits
         x = self.classifier(x)
-
+        
         return x

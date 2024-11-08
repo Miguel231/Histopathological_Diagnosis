@@ -66,6 +66,7 @@ class StandardImageDataset(Dataset):
             image = image.float()
         
         label = self.img_labels.iloc[idx, 2]  # Label is in the third column
+        label = 0 if label == -1 else label  # Convert -1 (if present) to 0 (negative class). as we are using crossentropyloss
         return image, label
 
 def weights(annotated_file):
@@ -86,6 +87,27 @@ def weights(annotated_file):
         c_general+=1
 
     return positives/c_general, negatives/c_general
+def weights(annotated_file):
+    df = pd.read_csv(annotated_file)
+    
+    # Initialize an empty list to store images
+    positives = 0
+    negatives = 0
+    c_general = 0
+    # Iterate over each row in the CSV
+    for _, row in df.iterrows():
+        # Construct the path to the image file
+        presence = row['Presence']
+        
+        # Remap -1 to 0 (negatives) and 1 to positives
+        if presence == -1:
+            negatives += 1
+        else:
+            positives += 1
+        c_general += 1
+
+    return positives/c_general, negatives/c_general
+
        
 annotations_file = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\TRAIN_DATA.csv"
 data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\USABLE"
@@ -175,31 +197,37 @@ criterion = nn.CrossEntropyLoss(weight=weight)
 
 
 # Using an Adam Optimizer with lr = 0.1
-optimizer = torch.optim.Adam(model.parameters(),
-                        lr = 1e-1,
-                        weight_decay = 1e-8)
+optimizer = torch.optim.Adam(model.parameters(), lr = 1e-1, weight_decay = 1e-8)
 
 epochs = 5
 outputs = []
 losses = []
 for epoch in range(epochs):
     epoch_loss = 0  # Initialize epoch loss
-
-    for (image, _) in data_loader:
-        reconstructed = model(image)      
-        # Calculating the loss function
-        loss = criterion(reconstructed, image)
-        
-        # Zero the gradients, backpropagate, and update weights
+    i = 0
+    for (image, label) in data_loader:
+        image, label = image.to(device), label.to(device)  # Move to device (GPU/CPU)
+        print(f"GO {i}")
+        # Zero the gradients, forward pass, and calculate the loss
         optimizer.zero_grad()
+        
+        # Forward pass
+        logits = model(image)  # Model output shape: [batch_size, num_classes]
+
+        # Calculate the loss: CrossEntropyLoss expects logits and class indices
+        loss = criterion(logits, label)  # `label` should be the class indices
+
+        # Backpropagate and update weights
         loss.backward()
         optimizer.step()
-        
+
         # Accumulate batch loss
         epoch_loss += loss.item()
+        i+=1
 
     # Calculate the average loss over all batches in the epoch
     avg_epoch_loss = epoch_loss / len(data_loader)
 
     # Print the average loss for this epoch
     print(f"Epoch [{epoch+1}/{epochs}], Loss: {avg_epoch_loss:.4f}")
+    
