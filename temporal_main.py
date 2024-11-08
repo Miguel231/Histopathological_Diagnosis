@@ -88,8 +88,12 @@ def weights(annotated_file):
 
     return positives/c_general, negatives/c_general
        
-annotations_file = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\TRAIN_DATA.csv"
-data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\USABLE"
+#annotations_file = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\TRAIN_DATA.csv"
+annotations_file = r"TRAIN_DATA.csv"
+
+
+#data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\USABLE"
+data_dir = r"USABLE"
 
 print("START LOAD FUNCTION")
 # Load images as a list using LoadAnnotated
@@ -116,7 +120,9 @@ if model_decision == 1:
     model = AE()
 else:
     print("INICIALIZE CLASSIFIER SECTION")
-    folder=r'C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis'
+    #folder=r'C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis'
+    folder=r'/export/fhome/vlia04/MyVirtualEnv/Histopathological_Diagnosis/'
+
     # Model Initialization
     # First, save DenseNet201 parameters
     save_densenet201_parameters(folder,"densenet201_params.npz")
