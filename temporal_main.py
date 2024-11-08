@@ -66,7 +66,7 @@ class StandardImageDataset(Dataset):
             image = image.float()
         
         label = self.img_labels.iloc[idx, 2]  # Label is in the third column
-        
+        label = 0 if label == -1 else label  # Convert -1 (if present) to 0 (negative class). as we are using crossentropyloss
         return image, label
 
 def weights(annotated_file):
@@ -87,6 +87,27 @@ def weights(annotated_file):
         c_general+=1
 
     return positives/c_general, negatives/c_general
+def weights(annotated_file):
+    df = pd.read_csv(annotated_file)
+    
+    # Initialize an empty list to store images
+    positives = 0
+    negatives = 0
+    c_general = 0
+    # Iterate over each row in the CSV
+    for _, row in df.iterrows():
+        # Construct the path to the image file
+        presence = row['Presence']
+        
+        # Remap -1 to 0 (negatives) and 1 to positives
+        if presence == -1:
+            negatives += 1
+        else:
+            positives += 1
+        c_general += 1
+
+    return positives/c_general, negatives/c_general
+
        
 #annotations_file = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\TRAIN_DATA.csv"
 annotations_file = r"TRAIN_DATA.csv"
@@ -135,52 +156,84 @@ else:
 
     # Initialize the model
     list_models = CustomResNetModel(embedding_dim, fc_layers, activations, batch_norms, dropout, pretrained_params="densenet201_params.npz")
-    for i in range(len(fc_layers)):
-        model = nn.Sequential(OrderedDict(list_models[i]))
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        model.to(device)
-        params = {k: v.cpu().numpy() for k, v in model.state_dict().items()}
-        np.savez(filename=f"densenet201_params_config{i}.npz", **params)
+    model = list_models
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.to(device)
+
+    # Loop over each fully connected layer configuration to save individually
+    for i, layer_block in enumerate(model.fc_block):
+        # Initialize a list to store layers
+        layer_dict = OrderedDict()
+        
+        # Check if the layer_block is a Sequential object (which contains multiple layers)
+        if isinstance(layer_block, nn.Sequential):
+            for j, layer in enumerate(layer_block):
+                # Ensure that the layer is of type nn.Linear before adding to the OrderedDict
+                if isinstance(layer, nn.Linear):
+                    layer_dict[f"linear_{i}_{j}"] = layer
+                elif isinstance(layer, nn.ReLU) or isinstance(layer, nn.Tanh) or isinstance(layer, nn.ReLU6):
+                    # Add activations if necessary
+                    layer_dict[f"activation_{i}_{j}"] = layer
+                elif isinstance(layer, nn.BatchNorm1d):
+                    # Add batch normalization if necessary
+                    layer_dict[f"batchnorm_{i}_{j}"] = layer
+                elif isinstance(layer, nn.Dropout):
+                    # Add dropout if necessary
+                    layer_dict[f"dropout_{i}_{j}"] = layer
+        else:
+            # Handle the case where the layer_block is a single Linear layer
+            if isinstance(layer_block, nn.Linear):
+                layer_dict[f"linear_{i}_0"] = layer_block
+
+        # Now we create the Sequential model with the filtered layers
+        config_model = nn.Sequential(layer_dict)
+        config_model.to(device)
+        
+        # Convert each parameter to numpy and save it with a unique filename
+        params = {k: v.cpu().numpy() for k, v in config_model.state_dict().items()}
+        np.savez(f"densenet201_params_config_{i}.npz", **params)
+        
+        print(f"Saved parameters for config {i} to 'densenet201_params_config_{i}.npz'")
 
 
-# Validation using MSE Loss function
-loss_function = torch.nn.MSELoss()
+
 pos_weight,neg_weight = weights(annotations_file)
 weight = torch.tensor([pos_weight,neg_weight])
 criterion = nn.CrossEntropyLoss(weight=weight)
 
 
 # Using an Adam Optimizer with lr = 0.1
-optimizer = torch.optim.Adam(model.parameters(),
-                        lr = 1e-1,
-                        weight_decay = 1e-8)
+optimizer = torch.optim.Adam(model.parameters(), lr = 1e-1, weight_decay = 1e-8)
 
 epochs = 5
 outputs = []
 losses = []
 for epoch in range(epochs):
     epoch_loss = 0  # Initialize epoch loss
-
-    for (image, _) in data_loader:
-        # Reshaping the image to (-1, 784)
-        image = image.reshape(-1, 28 * 28)
-        
-        # Output of Autoencoder
-        reconstructed = model(image)
-        
-        # Calculating the loss function
-        loss = loss_function(reconstructed, image)
-        
-        # Zero the gradients, backpropagate, and update weights
+    i = 0
+    for (image, label) in data_loader:
+        image, label = image.to(device), label.to(device)  # Move to device (GPU/CPU)
+        print(f"GO {i}")
+        # Zero the gradients, forward pass, and calculate the loss
         optimizer.zero_grad()
+        
+        # Forward pass
+        logits = model(image)  # Model output shape: [batch_size, num_classes]
+
+        # Calculate the loss: CrossEntropyLoss expects logits and class indices
+        loss = criterion(logits, label)  # `label` should be the class indices
+
+        # Backpropagate and update weights
         loss.backward()
         optimizer.step()
-        
+
         # Accumulate batch loss
         epoch_loss += loss.item()
+        i+=1
 
     # Calculate the average loss over all batches in the epoch
     avg_epoch_loss = epoch_loss / len(data_loader)
 
     # Print the average loss for this epoch
     print(f"Epoch [{epoch+1}/{epochs}], Loss: {avg_epoch_loss:.4f}")
+    
