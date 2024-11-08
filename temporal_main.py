@@ -88,8 +88,8 @@ def weights(annotated_file):
 
     return positives/c_general, negatives/c_general
        
-annotations_file = r"C:\Users\larar\OneDrive\Documentos\Escritorio\PROJECT_VISION2\TRAIN_DATA.csv"
-data_dir = r"C:/Users/larar/OneDrive/Documentos/Escritorio/PROJECT_VISION2/USABLE"
+annotations_file = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\TRAIN_DATA.csv"
+data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\USABLE"
 
 print("START LOAD FUNCTION")
 # Load images as a list using LoadAnnotated
@@ -109,14 +109,14 @@ data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
 print("FINISH DATALOADER")
 
 
-model_decision = input("CLASSIFIER OR ANOMALY DETECTION: ")
+model_decision = 0
 if model_decision == 1:
     print("INICIALIZE AUTOENCODER PROCESS")
     # Model Initialization
     model = AE()
 else:
     print("INICIALIZE CLASSIFIER SECTION")
-    folder=r'C:\Users\larar\OneDrive\Documentos\Escritorio\PROJECT_VISION2'
+    folder=r'C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis'
     # Model Initialization
     # First, save DenseNet201 parameters
     save_densenet201_parameters(folder,"densenet201_params.npz")

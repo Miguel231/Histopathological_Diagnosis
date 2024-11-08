@@ -90,7 +90,7 @@ for file_name in os.listdir(extract_folder):
 
 # Save the train_data_records to a CSV file named TRAIN_DATA.csv
 train_data_df = pd.DataFrame(train_data_records)
-train_data_df.to_csv(os.path.join("C:/Users/larar/OneDrive/Documentos/Escritorio/PROJECT_VISION2", 'TRAIN_DATA.csv'), index=False)
+train_data_df.to_csv(os.path.join(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis", 'TRAIN_DATA.csv'), index=False)
 
 # Print completion message and total count
 print("Filtered images have been copied to the USABLE folder.")
