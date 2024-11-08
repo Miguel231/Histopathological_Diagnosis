@@ -66,7 +66,6 @@ class StandardImageDataset(Dataset):
             image = image.float()
         
         label = self.img_labels.iloc[idx, 2]  # Label is in the third column
-        
         return image, label
 
 def weights(annotated_file):
@@ -129,16 +128,47 @@ else:
 
     # Initialize the model
     list_models = CustomResNetModel(embedding_dim, fc_layers, activations, batch_norms, dropout, pretrained_params="densenet201_params.npz")
-    for i in range(len(fc_layers)):
-        model = nn.Sequential(OrderedDict(list_models[i]))
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        model.to(device)
-        params = {k: v.cpu().numpy() for k, v in model.state_dict().items()}
-        np.savez(filename=f"densenet201_params_config{i}.npz", **params)
+    model = list_models
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.to(device)
+
+    # Loop over each fully connected layer configuration to save individually
+    for i, layer_block in enumerate(model.fc_block):
+        # Initialize a list to store layers
+        layer_dict = OrderedDict()
+        
+        # Check if the layer_block is a Sequential object (which contains multiple layers)
+        if isinstance(layer_block, nn.Sequential):
+            for j, layer in enumerate(layer_block):
+                # Ensure that the layer is of type nn.Linear before adding to the OrderedDict
+                if isinstance(layer, nn.Linear):
+                    layer_dict[f"linear_{i}_{j}"] = layer
+                elif isinstance(layer, nn.ReLU) or isinstance(layer, nn.Tanh) or isinstance(layer, nn.ReLU6):
+                    # Add activations if necessary
+                    layer_dict[f"activation_{i}_{j}"] = layer
+                elif isinstance(layer, nn.BatchNorm1d):
+                    # Add batch normalization if necessary
+                    layer_dict[f"batchnorm_{i}_{j}"] = layer
+                elif isinstance(layer, nn.Dropout):
+                    # Add dropout if necessary
+                    layer_dict[f"dropout_{i}_{j}"] = layer
+        else:
+            # Handle the case where the layer_block is a single Linear layer
+            if isinstance(layer_block, nn.Linear):
+                layer_dict[f"linear_{i}_0"] = layer_block
+
+        # Now we create the Sequential model with the filtered layers
+        config_model = nn.Sequential(layer_dict)
+        config_model.to(device)
+        
+        # Convert each parameter to numpy and save it with a unique filename
+        params = {k: v.cpu().numpy() for k, v in config_model.state_dict().items()}
+        np.savez(f"densenet201_params_config_{i}.npz", **params)
+        
+        print(f"Saved parameters for config {i} to 'densenet201_params_config_{i}.npz'")
 
 
-# Validation using MSE Loss function
-loss_function = torch.nn.MSELoss()
+
 pos_weight,neg_weight = weights(annotations_file)
 weight = torch.tensor([pos_weight,neg_weight])
 criterion = nn.CrossEntropyLoss(weight=weight)
@@ -156,14 +186,9 @@ for epoch in range(epochs):
     epoch_loss = 0  # Initialize epoch loss
 
     for (image, _) in data_loader:
-        # Reshaping the image to (-1, 784)
-        image = image.reshape(-1, 28 * 28)
-        
-        # Output of Autoencoder
-        reconstructed = model(image)
-        
+        reconstructed = model(image)      
         # Calculating the loss function
-        loss = loss_function(reconstructed, image)
+        loss = criterion(reconstructed, image)
         
         # Zero the gradients, backpropagate, and update weights
         optimizer.zero_grad()

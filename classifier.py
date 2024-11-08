@@ -1,10 +1,14 @@
+import os
 import torch
+
+# Set a custom cache directory
+torch.hub.set_dir("C:/Users/larar/torch_cache")
+
 import torch.nn as nn
 from torchvision import models, transforms
 import numpy as np
 from collections import OrderedDict
 from torchvision.models import densenet201, DenseNet201_Weights
-import os
 
 def save_densenet201_parameters(folder, filename="densenet201_params.npz"):
     # Ensure the folder exists; if not, create it
@@ -41,16 +45,18 @@ def load_densenet201_parameters(filename="densenet201_params.npz"):
     return model, num_features
 
 class CustomResNetModel(nn.Module):
-    def __init__(self, embedding_dim, fc_layers, activations, batch_norms, dropout=0.25,pretrained_params=None):
+    def __init__(self, embedding_dim, fc_layers, activations, batch_norms, dropout=0.25, pretrained_params=None, num_classes=2):
         super(CustomResNetModel, self).__init__()
+
         # Load DenseNet201 with pretrained parameters if specified
         if pretrained_params:
             self.model, self.densenet_channels = load_densenet201_parameters(pretrained_params)
         else:
-            self.model = models.densenet201(pretrained=False)
-            self.num_features = self.model.classifier.in_features
+            self.model = models.densenet201(pretrained=True)
+            self.densenet_channels = self.model.classifier.in_features
             self.model.classifier = nn.Identity()
 
+        # Embedding layer setup
         if embedding_dim is not None:
             self.embedding = nn.Linear(self.densenet_channels, embedding_dim)
             self.in_features = embedding_dim
@@ -58,50 +64,25 @@ class CustomResNetModel(nn.Module):
             self.embedding = None
             self.in_features = self.densenet_channels
 
-        # Define FC layers using provided configuration
+        # Define fully connected layers
         self.fc_block = self.build_fc_block(self.in_features, fc_layers, activations, batch_norms, dropout)
-        
-    def build_fc_block(self, in_features, fc_layers, activations, batch_norms, dropout):
-        num_config = []
-        layers = [in_features] + fc_layers
-        
-        for i in range(len(fc_layers)):
-            BlockArchitecture = []
-            # Fully connected layer
-            BlockArchitecture.append((f'fc{i+1}', nn.Linear(layers[i], layers[i+1])))
-            
-            # Activation layer
-            if activations[i] == 'relu':
-                BlockArchitecture.append((f'relu{i+1}', nn.ReLU(inplace=True)))
-            elif activations[i] == 'tanh':
-                BlockArchitecture.append((f'tanh{i+1}', nn.Tanh()))
-            elif activations[i] == 'relu6':
-                BlockArchitecture.append((f'relu6{i+1}', nn.ReLU6(inplace=True)))
-            
-            # Batch normalization
-            if batch_norms[i] == 'batch':
-                BlockArchitecture.append((f'batchnorm{i+1}', nn.BatchNorm1d(layers[i+1])))
-                
-            # Dropout layer
-            BlockArchitecture.append((f'dropout{i+1}', nn.Dropout(dropout)))
-        num_config.append(BlockArchitecture)
-        return num_config
-        #return nn.Sequential(OrderedDict(BlockArchitecture))
-    
+
+        # Final classifier layer (output logits for classification)
+        self.classifier = nn.Linear(fc_layers[-1], num_classes)
+
     def forward(self, x):
-        # Forward through ResNet backbone
-        x = self.resnet_backbone(x)
-        x = torch.flatten(x, 1)  # Flatten to (batch_size, 2048) for ResNet50
-        
+        # Forward through DenseNet backbone (without classifier)
+        x = self.model(x)
+        x = torch.flatten(x, 1)
+
         # Forward through embedding layer if defined
         if self.embedding is not None:
             x = self.embedding(x)
-        
+
         # Forward through FC block
         x = self.fc_block(x)
+
+        # Forward through final classifier to get logits
+        x = self.classifier(x)
+
         return x
-
-
-
-    
-    
