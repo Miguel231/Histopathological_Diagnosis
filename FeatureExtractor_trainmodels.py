@@ -39,12 +39,6 @@ def LoadAnnotated(df, data_dir):
 
 class StandardImageDataset(Dataset):
     def __init__(self, annotations_file, img_list, transform=None):
-        """
-        Args:
-            annotations_file (str): Path to the Excel file with annotations.
-            img_list (list): List of preloaded images in PIL format.
-            transform (callable, optional): Optional transform to apply to the images.
-        """
         # Load the annotations from the Excel file
         self.img_labels = annotations_file
         self.img_list = img_list
