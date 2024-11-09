@@ -109,98 +109,6 @@ def weights(annotated_file):
 
     return positives/c_general, negatives/c_general
 
-       
-#annotations_file = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\TRAIN_DATA.csv"
-annotations_file = r"TRAIN_DATA.csv"
-
-
-#data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\USABLE"
-data_dir = r"USABLE"
-
-print("START LOAD FUNCTION")
-# Load images as a list using LoadAnnotated
-img_list = LoadAnnotated(annotations_file, data_dir)
-print("FINISH LOAD FUNCTION")
-# Define any transformations (e.g., resizing and converting to tensor)
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),  # Resize images
-    transforms.ToTensor(),          # Convert images to tensor (C, H, W)
-])
-print("START STANDARD DATASET")
-dataset = StandardImageDataset(annotations_file, img_list, transform=transform)
-print("FINISH STANDARD DATASET")
-# Use DataLoader for batching
-print("START DATALOADER")
-data_loader = DataLoader(dataset, batch_size=500, shuffle=True)
-print("FINISH DATALOADER")
-
-
-model_decision = 0
-if model_decision == 1:
-    print("INICIALIZE AUTOENCODER PROCESS")
-    # Model Initialization
-    model = AE()
-else:
-    print("INICIALIZE CLASSIFIER SECTION")
-    #folder=r'C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis'
-    folder=r'/export/fhome/vlia04/MyVirtualEnv/Histopathological_Diagnosis/'
-
-    # Model Initialization
-    # First, save DenseNet201 parameters
-    save_densenet201_parameters(folder,"densenet201_params.npz")
-
-    embedding_dim = 512  # Size of the embedding layer output, set None to skip embedding layer
-    fc_layers = [256, 128]  # Sizes for each fully connected layer
-    activations = ['relu', 'tanh']  # Activation functions for each FC layer
-    batch_norms = ['batch', None]  # Batch normalization settings for each FC layer
-    dropout = 0.25  # Dropout probability for each layer
-
-    # Initialize the model
-    list_models = CustomResNetModel(embedding_dim, fc_layers, activations, batch_norms, dropout, pretrained_params="densenet201_params.npz")
-    model = list_models
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model.to(device)
-
-    # Loop over each fully connected layer configuration to save individually
-    for i, layer_block in enumerate(model.fc_block):
-        # Initialize a list to store layers
-        layer_dict = OrderedDict()
-        
-        # Check if the layer_block is a Sequential object (which contains multiple layers)
-        if isinstance(layer_block, nn.Sequential):
-            for j, layer in enumerate(layer_block):
-                # Ensure that the layer is of type nn.Linear before adding to the OrderedDict
-                if isinstance(layer, nn.Linear):
-                    layer_dict[f"linear_{i}_{j}"] = layer
-                elif isinstance(layer, nn.ReLU) or isinstance(layer, nn.Tanh) or isinstance(layer, nn.ReLU6):
-                    # Add activations if necessary
-                    layer_dict[f"activation_{i}_{j}"] = layer
-                elif isinstance(layer, nn.BatchNorm1d):
-                    # Add batch normalization if necessary
-                    layer_dict[f"batchnorm_{i}_{j}"] = layer
-                elif isinstance(layer, nn.Dropout):
-                    # Add dropout if necessary
-                    layer_dict[f"dropout_{i}_{j}"] = layer
-        else:
-            # Handle the case where the layer_block is a single Linear layer
-            if isinstance(layer_block, nn.Linear):
-                layer_dict[f"linear_{i}_0"] = layer_block
-
-        # Now we create the Sequential model with the filtered layers
-        config_model = nn.Sequential(layer_dict)
-        config_model.to(device)
-        
-        # Convert each parameter to numpy and save it with a unique filename
-        params = {k: v.cpu().numpy() for k, v in config_model.state_dict().items()}
-        np.savez(f"densenet201_params_config_{i}.npz", **params)
-        
-        print(f"Saved parameters for config {i} to 'densenet201_params_config_{i}.npz'")
-
-
-
-pos_weight,neg_weight = weights(annotations_file)
-weight = torch.tensor([pos_weight,neg_weight])
-criterion = nn.CrossEntropyLoss(weight=weight)
 model_decision = int(input("Select the method you want to proceed ( 0 = classifier and 1 = autoencoder): "))
 if model_decision == 0:
     annotations_file = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\TRAIN_DATA.csv")
@@ -215,25 +123,17 @@ if model_decision == 0:
     print("START STANDARD DATASET")
     dataset = StandardImageDataset(annotations_file, img_list, transform=transform)
     print("FINISH STANDARD DATASET")
-    print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
-    # Prepare cross-validation split
-    k_folds = 5
-    unique_patient_ids = annotations_file['Pat_ID'].unique()
-    patient_labels = annotations_file.groupby('Pat_ID')['Presence'].max().map({-1: 0, 1: 1})  # Binary labels
-
-    # Stratified K-Fold on unique patients
-    strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
-    all_configurations = []
-
+    
     # Define ranges for configurations
     model_options = ["resnet50", "densenet201"]  # Model architectures
     num_layers_options = range(1, 4)  # Number of layers (1 to 3)
     units_per_layer_options = [64, 128, 256]  # Units per layer
     dropout_options = [0.25]  # Dropout probabilities
-
+    all_configurations = []
     # Folder to save models
     save_folder = "saved_models"
     os.makedirs(save_folder, exist_ok=True)
+
     # Generate all possible configurations (for layers with different unit values)
     for num_layers in num_layers_options:
         # Get layer configurations, filtering out unwanted combinations
@@ -255,28 +155,34 @@ if model_decision == 0:
 
     # Print total number of configurations and details
     print(f"Total number of configurations: {len(all_configurations)}")
+    print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
     # Initialize fold_indices to save the indices of train and validation data for each fold
     fold_indices = []
+    annotations_file['Presence'] = annotations_file['Presence'].map({-1: 0, 1: 1})  # map to binary labels
+    # 1. Define your patch labels
+    patch_labels = annotations_file['Presence'].values
+    # 2. Perform Stratified K-Fold split based on patch labels (Presence)
+    k_folds = 3 
+    strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
 
-    # Train models for each fold and configuration
-    for fold, (train_patient_idx, val_patient_idx) in enumerate(strat_kfold.split(unique_patient_ids, patient_labels)):
-        print(f"\nStarting fold {fold + 1}/{k_folds}")
+    # 3. Initialize fold_indices to save indices for train and validation sets
+    fold_indices = []
 
-        # Get patient IDs for train and validation
-        train_patients = unique_patient_ids[train_patient_idx]
-        val_patients = unique_patient_ids[val_patient_idx]
+    # Perform Stratified K-Fold split based on patch-level labels
+    for fold, (train_idx, val_idx) in enumerate(strat_kfold.split(annotations_file, patch_labels)):
+        print(f"Starting fold {fold + 1}/{k_folds}")
+        # Collect patch indices for training and validation sets
+        train_df = annotations_file.iloc[train_idx]
+        val_df = annotations_file.iloc[val_idx]
 
-        # Indices for patches belonging to train and validation patients
-        train_df = annotations_file[annotations_file['Pat_ID'].isin(train_patients)]
-        val_df = annotations_file[annotations_file['Pat_ID'].isin(val_patients)]
-        train_idx = train_df.index.tolist()
-        val_idx = val_df.index.tolist()
+        # Save indices to fold_indices
+        fold_indices.append({'train': train_idx, 'val': val_idx})
 
-        # Create subset datasets for training and validation
-        train_subset = Subset(dataset, train_idx)
-        val_subset = Subset(dataset, val_idx)
+        # Now create subsets for training and validation based on these indices
+        train_subset = Subset(dataset, train_idx)  # Use your dataset object
+        val_subset = Subset(dataset, val_idx)  # Use your dataset object
 
-        # Define data loaders for training and validation
+        # Define dataloaders for training and validation sets
         train_loader = DataLoader(train_subset, batch_size=500, shuffle=True)
         val_loader = DataLoader(val_subset, batch_size=500, shuffle=False)
 
@@ -305,31 +211,6 @@ if model_decision == 0:
             criterion = nn.CrossEntropyLoss(weight=weight)
             optimizer = torch.optim.Adam(custom_model.parameters(), lr=0.01, weight_decay=1e-8)
 
-
-# Using an Adam Optimizer with lr = 0.1
-optimizer = torch.optim.Adam(model.parameters(), lr = 1e-1, weight_decay = 1e-8)
-
-epochs = 5
-outputs = []
-losses = []
-for epoch in range(epochs):
-    epoch_loss = 0  # Initialize epoch loss
-    i = 0
-    for (image, label) in data_loader:
-        image, label = image.to(device), label.to(device)  # Move to device (GPU/CPU)
-        #print(f"GO {i}")
-        # Zero the gradients, forward pass, and calculate the loss
-        optimizer.zero_grad()
-        
-        # Forward pass
-        logits = model(image)  # Model output shape: [batch_size, num_classes]
-
-        # Calculate the loss: CrossEntropyLoss expects logits and class indices
-        loss = criterion(logits, label)  # `label` should be the class indices
-
-        # Backpropagate and update weights
-        loss.backward()
-        optimizer.step()
             # Training loop
             epochs = 5
             for epoch in range(epochs):
@@ -337,8 +218,8 @@ for epoch in range(epochs):
                 train_loss, correct_train, total_train = 0.0, 0, 0
 
                 for images, labels in train_loader:
-                    print("HELLO")
                     images, labels = images.to(device), labels.to(device)
+                    print("HELLO")
                     
                     # Forward pass and loss calculation
                     optimizer.zero_grad()
@@ -381,8 +262,5 @@ for epoch in range(epochs):
             save_path = os.path.join(save_folder, filename)
             torch.save(custom_model.state_dict(), save_path)
             print(f"Saved configuration: {filename}")
-
     # Save fold indices
-    np.savez('saved_fold_indices.npz', fold_indices=[{'train': train_idx, 'val': val_idx} for train_idx, val_idx in fold_indices])
-if model_decision == 1:
-    print("AUTOENCODER")
+    np.savez('saved_fold_indices.npz', fold_indices=fold_indices)
