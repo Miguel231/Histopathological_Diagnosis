@@ -133,7 +133,7 @@ if model_decision == 0:
     annotations_file = pd.read_csv(r"TRAIN_DATA.csv")
 
     #data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\USABLE"
-    data_dir = r"USABLE"
+    data_dir = r"USABLE_annotated"
 
     patient_groups = annotations_file.groupby('Pat_ID')
     print("START LOAD FUNCTION")

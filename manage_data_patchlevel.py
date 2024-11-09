@@ -3,8 +3,8 @@ import shutil
 import pandas as pd
 
 # Paths to your folders and Excel file
-extract_folder = 'C:/Users/larar/OneDrive/Documentos/Escritorio/CHALLENGE#2_VISION/EXTRACT'
-usable_folder = 'C:/Users/larar/OneDrive/Documentos/Escritorio/PROJECT_VISION2/USABLE'
+extract_folder = r'C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\EXTRACT_annotated'
+usable_folder = r'C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\USABLE_annotated'
 excel_path = 'C:/Users/larar/OneDrive/Documentos/Escritorio/Histopathological_Diagnosis-3/Excel Files/HP_WSI-CoordAnnotatedPatches.xlsx'
 
 # Load the Excel file into a DataFrame
@@ -90,7 +90,7 @@ for file_name in os.listdir(extract_folder):
 
 # Save the train_data_records to a CSV file named TRAIN_DATA.csv
 train_data_df = pd.DataFrame(train_data_records)
-train_data_df.to_csv(os.path.join(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis", 'TRAIN_DATA.csv'), index=False)
+train_data_df.to_csv(os.path.join(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis", 'TRAIN_DATA_annotated.csv'), index=False)
 
 # Print completion message and total count
 print("Filtered images have been copied to the USABLE folder.")

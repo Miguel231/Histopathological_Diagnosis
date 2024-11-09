@@ -1,0 +1,1 @@
+#patint csv (taules) --> BAIX (0) /ALT (1)
