@@ -88,26 +88,6 @@ def weights(annotated_file):
         c_general+=1
 
     return positives/c_general, negatives/c_general
-def weights(annotated_file):
-    df = annotated_file
-    
-    # Initialize an empty list to store images
-    positives = 0
-    negatives = 0
-    c_general = 0
-    # Iterate over each row in the CSV
-    for _, row in df.iterrows():
-        # Construct the path to the image file
-        presence = row['Presence']
-        
-        # Remap -1 to 0 (negatives) and 1 to positives
-        if presence == -1:
-            negatives += 1
-        else:
-            positives += 1
-        c_general += 1
-
-    return positives/c_general, negatives/c_general
 
 model_decision = int(input("Select the method you want to proceed ( 0 = classifier and 1 = autoencoder): "))
 if model_decision == 0:
