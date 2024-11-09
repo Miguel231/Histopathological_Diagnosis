@@ -234,7 +234,7 @@ if model_decision == 0:
             optimizer = torch.optim.Adam(custom_model.parameters(), lr=0.01, weight_decay=1e-8)
 
             # Train the model and get the loss/accuracy per epoch
-            epoch_losses, epoch_accuracies = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=5)
+            epoch_losses, epoch_accuracies = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=15)
 
             # Save the model weights after training
             filename = (f"{config['model_name']}_{config['num_layers']}layers_"
