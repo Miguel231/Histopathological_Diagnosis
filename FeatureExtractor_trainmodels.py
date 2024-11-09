@@ -230,7 +230,7 @@ if model_decision == 0:
             # Define loss and optimizer
             pos_weight, neg_weight = weights(annotations_file)
             weight = torch.tensor([pos_weight, neg_weight], device=device)
-            criterion = nn.CrossEntropyLoss(weight=weight)
+            criterion = nn.CrossEntropyLoss(weight=weight) #expect integers
             optimizer = torch.optim.Adam(custom_model.parameters(), lr=0.01, weight_decay=1e-8)
 
             # Train the model and get the loss/accuracy per epoch
