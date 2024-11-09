@@ -91,8 +91,12 @@ def weights(annotated_file):
 
 model_decision = int(input("Select the method you want to proceed ( 0 = classifier and 1 = autoencoder): "))
 if model_decision == 0:
-    annotations_file = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\TRAIN_DATA.csv")
-    data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\USABLE"
+    #annotations_file = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\TRAIN_DATA.csv")
+    annotations_file = pd.read_csv(r"TRAIN_DATA.csv")
+
+    #data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\USABLE"
+    data_dir = r"USABLE"
+
     patient_groups = annotations_file.groupby('Pat_ID')
     print("START LOAD FUNCTION")
     # Load images as a list using LoadAnnotated
@@ -199,7 +203,7 @@ if model_decision == 0:
 
                 for images, labels in train_loader:
                     images, labels = images.to(device), labels.to(device)
-                    print("HELLO")
+                    #print("HELLO")
                     
                     # Forward pass and loss calculation
                     optimizer.zero_grad()
@@ -242,5 +246,6 @@ if model_decision == 0:
             save_path = os.path.join(save_folder, filename)
             torch.save(custom_model.state_dict(), save_path)
             print(f"Saved configuration: {filename}")
+
     # Save fold indices
     np.savez('saved_fold_indices.npz', fold_indices=fold_indices)
