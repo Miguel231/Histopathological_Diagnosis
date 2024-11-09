@@ -211,7 +211,7 @@ if model_decision == 0:
         # Loop through each configuration
         for config_idx, config in enumerate(all_configurations, start=1):
             print(f"Training config {config_idx}/{len(all_configurations)} in fold {fold + 1}")
-
+            print(f"Configuration details: {config}")  
             # Initialize the model for each configuration
             custom_model = CustomModel(
                 model_name=config["model_name"],
