@@ -89,6 +89,50 @@ def weights(annotated_file):
 
     return positives/c_general, negatives/c_general
 
+def train_model(custom_model, train_loader, criterion, optimizer, device, epochs=5):
+    # To store the loss and accuracy for each epoch
+    epoch_losses = []
+    epoch_accuracies = []
+
+    # Training loop
+    for epoch in range(epochs):
+        custom_model.train()  # Set the model to training mode
+        train_loss = 0.0
+        correct_train = 0
+        total_train = 0
+        
+        for images, labels in train_loader:
+            images, labels = images.to(device), labels.to(device)
+
+            # Forward pass
+            optimizer.zero_grad()
+            logits = custom_model(images)
+
+            # Compute the loss
+            loss = criterion(logits, labels)
+            loss.backward()
+            optimizer.step()
+
+            # Track the training loss
+            train_loss += loss.item() * images.size(0)
+            
+            # Calculate accuracy
+            _, predicted = torch.max(logits, 1)
+            correct_train += (predicted == labels).sum().item()
+            total_train += labels.size(0)
+
+        # Average loss and accuracy for the epoch
+        avg_train_loss = train_loss / total_train
+        train_accuracy = correct_train / total_train * 100
+
+        # Store the loss and accuracy for the current epoch
+        epoch_losses.append(avg_train_loss)
+        epoch_accuracies.append(train_accuracy)
+
+        print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_train_loss:.4f}, Train Accuracy: {train_accuracy:.2f}%")
+    
+    return epoch_losses, epoch_accuracies
+
 model_decision = int(input("Select the method you want to proceed ( 0 = classifier and 1 = autoencoder): "))
 if model_decision == 0:
     #annotations_file = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\TRAIN_DATA.csv")
@@ -146,7 +190,7 @@ if model_decision == 0:
     # 1. Define your patch labels
     patch_labels = annotations_file['Presence'].values
     # 2. Perform Stratified K-Fold split based on patch labels (Presence)
-    k_folds = 3 
+    k_folds = 5
     strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
 
     # 3. Initialize fold_indices to save indices for train and validation sets
@@ -195,57 +239,12 @@ if model_decision == 0:
             criterion = nn.CrossEntropyLoss(weight=weight)
             optimizer = torch.optim.Adam(custom_model.parameters(), lr=0.01, weight_decay=1e-8)
 
-            # Training loop
-            epochs = 5
-            for epoch in range(epochs):
-                custom_model.train()
-                train_loss, correct_train, total_train = 0.0, 0, 0
+            # Train the model and get the loss/accuracy per epoch
+            epoch_losses, epoch_accuracies = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=5)
 
-                for images, labels in train_loader:
-                    images, labels = images.to(device), labels.to(device)
-                    #print("HELLO")
-                    
-                    # Forward pass and loss calculation
-                    optimizer.zero_grad()
-                    logits = custom_model(images)
-                    loss = criterion(logits, labels)
-                    loss.backward()
-                    optimizer.step()
-
-                    train_loss += loss.item() * images.size(0)
-                    _, predicted = torch.max(logits, 1)
-                    correct_train += (predicted == labels).sum().item()
-                    total_train += labels.size(0)
-
-                avg_train_loss = train_loss / total_train
-                train_accuracy = correct_train / total_train * 100
-                print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_train_loss:.4f}, Train Accuracy: {train_accuracy:.2f}%")
-
-            # Validation loop
-            custom_model.eval()
-            val_loss, correct_val, total_val = 0.0, 0, 0
-
-            with torch.no_grad():
-                for images, labels in val_loader:
-                    images, labels = images.to(device), labels.to(device)
-                    outputs = custom_model(images)
-                    loss = criterion(outputs, labels)
-                    val_loss += loss.item() * images.size(0)
-                    
-                    _, predicted = torch.max(outputs, 1)
-                    correct_val += (predicted == labels).sum().item()
-                    total_val += labels.size(0)
-
-            avg_val_loss = val_loss / total_val
-            val_accuracy = correct_val / total_val * 100
-            print(f"Validation Loss: {avg_val_loss:.4f}, Validation Accuracy: {val_accuracy:.2f}%")
-
-            # Save model and configuration
+            # Save the model weights after training
             filename = (f"{config['model_name']}_{config['num_layers']}layers_"
                         f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}.pth")
             save_path = os.path.join(save_folder, filename)
             torch.save(custom_model.state_dict(), save_path)
-            print(f"Saved configuration: {filename}")
-
-    # Save fold indices
-    np.savez('saved_fold_indices.npz', fold_indices=fold_indices)
+            print(f"Saved model: {filename}")
