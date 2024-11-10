@@ -6,7 +6,7 @@ import pandas as pd
 
 
 # Path to the CSV file
-csv_path = r"C:\Users\larar\OneDrive\Documentos\Escritorio\PROJECT_VISION2\PatientDiagnosis.csv"
+csv_path = r"C:\Users\larar\OneDrive\Documentos\Escritorio\PROJECT_VISION2\PatientDiagnosis_holdout.csv"
 
 # Load the CSV file into a DataFrame
 csv_df = pd.read_csv(csv_path)
@@ -30,4 +30,5 @@ output_path = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_
 
 # Save the modified DataFrame to a new CSV file
 csv_df[['CODI', 'DENSITAT']].to_csv(output_path, index=False)
-print(f"TRAIN_DATA_cropped.csv has been saved with modified DENSITAT values.")
+
+print(f"TRAIN_DATA_holdout.csv has been saved with modified DENSITAT values.")
