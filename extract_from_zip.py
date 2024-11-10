@@ -58,7 +58,7 @@ def rename_patient_images(base_dir):
             for i, image_file in enumerate(os.listdir(patient_folder_path)):
                 image_path = os.path.join(patient_folder_path, image_file)
                 if os.path.isfile(image_path):
-                    new_name = os.path.join(patient_folder_path, f"{patient_folder}.jpg")
+                    new_name = os.path.join(patient_folder_path, f"{patient_folder}.png")
                     os.rename(image_path, new_name)
 
 # Run extraction
