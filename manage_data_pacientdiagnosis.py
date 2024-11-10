@@ -43,7 +43,7 @@ for file_name in os.listdir(extract_folder):
     if not match.empty:
         presence_value = match['Presence'].iloc[0]
         # Add the matched data to the train_data_records list
-        if presence_value == -1:
+        if presence_value == "NEGATIVA":
             train_data_records.append({
                 'Pat_ID': pat_id,
                 'Presence': 0
