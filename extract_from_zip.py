@@ -7,9 +7,10 @@ import os
 
 # Paths
 crossvalidation_zip_path = "C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/CrossValidation.zip"
+holdout_zip_path = r"C:\Users\larar\OneDrive\Documentos\Escritorio\CHALLENGE#2_VISION\HoldOut.zip"
 extraction_dir_annotated = 'C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/EXTRACT_annotated'
 extraction_dir_cropped = 'C:/Users/merit/OneDrive/Escritorio/UNIVERSITAT/3-A ASSIGNATURES/VISION & LEARNING/PROJECT 2 - HELICOBACTER DETECTION/EXTRACT_cropped'
-
+extract_dir_holdout = r'C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5/EXTRACT_holdout'
 # Get user input
 #level_choice = input("Do you want to analyze by Patch level or Patient level? ").strip().lower()
 level_choice = "patient level"
