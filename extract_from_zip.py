@@ -50,6 +50,7 @@ def extract_nested_zip(zip_path, extract_to):
                 outer_zip.extract(item, extract_to)
 
 # Rename images inside each patient folder
+# Rename images inside each patient folder
 def rename_patient_images(base_dir):
     for root, dirs, _ in os.walk(base_dir):
         for patient_folder in dirs:
