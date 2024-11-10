@@ -117,8 +117,8 @@ def evaluate_models(saved_models_folder, val_loader, custom_model_class, device)
 model_decision = int(input("Choose desired models to evaluate (0 = classifier or 1 = autoencoder): "))
 if model_decision == 0:
     # Load validation dataset (same as in the training script)
-    annotations_file = pd.read_csv("TRAIN_DATA.csv")  # Or your validation set CSV
-    data_dir = "USABLE"
+    annotations_file = pd.read_csv("TRAIN_DATA_annotated.csv")  # Or your validation set CSV
+    data_dir = "USABLE_annotated"
     img_list = LoadAnnotated(annotations_file, data_dir)
     transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
     dataset = StandardImageDataset(annotations_file, img_list, transform=transform)
