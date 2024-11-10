@@ -266,7 +266,7 @@ elif model_decision == 1:
     patch_labels = annotations_file['Presence'].values
     k_folds = 5
     strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
-
+    thresholds = []
     # Initialize fold_indices to save indices for each fold
     for fold, (train_idx, val_idx) in enumerate(strat_kfold.split(annotations_file, patch_labels)):
         print(f"Starting fold {fold + 1}/{k_folds}")
@@ -302,7 +302,7 @@ elif model_decision == 1:
         # Calculate adaptive threshold for anomaly detection
         adaptive_threshold = calculate_adaptive_threshold(val_errors)
         print(f"Adaptive threshold for anomaly detection: {adaptive_threshold:.4f}")
-        
+        thresholds.append(adaptive_threshold)
         # Save the model after training
         filename = f"autoencoder_fold{fold + 1}.pth"
         save_path = os.path.join("saved_models", filename)
