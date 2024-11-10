@@ -13,7 +13,6 @@ import torch.nn as nn
 from sklearn.model_selection import StratifiedKFold
 from itertools import product
 
-
 def LoadAnnotated(df, data_dir):
     # Initialize an empty list to store images
     IMS = []
@@ -242,3 +241,70 @@ if model_decision == 0:
             save_path = os.path.join(save_folder, filename)
             torch.save(custom_model.state_dict(), save_path)
             print(f"Saved model: {filename}")
+
+elif model_decision == 1:
+    annotations_file = pd.read_csv(r"TRAIN_DATA_cropped.csv")
+    data_dir = r"USABLE_annotated"
+    patient_groups = annotations_file.groupby('Pat_ID')
+    print("START LOAD FUNCTION")
+    
+    # Load images using the LoadAnnotated function
+    img_list = LoadAnnotated(annotations_file, data_dir)
+    print("FINISH LOAD FUNCTION")
+    
+    # Define image transformations (resize to 224x224 and convert to tensor)
+    transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
+    print("START STANDARD DATASET")
+    
+    dataset = StandardImageDataset(annotations_file, img_list, transform=transform)
+    print("FINISH STANDARD DATASET")
+    
+    # Stratified K-Fold split
+    print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
+    fold_indices = []
+    annotations_file['Presence'] = annotations_file['Presence'].map({-1: 0, 1: 1})  # map to binary labels
+    patch_labels = annotations_file['Presence'].values
+    k_folds = 5
+    strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
+
+    # Initialize fold_indices to save indices for each fold
+    for fold, (train_idx, val_idx) in enumerate(strat_kfold.split(annotations_file, patch_labels)):
+        print(f"Starting fold {fold + 1}/{k_folds}")
+        train_df = annotations_file.iloc[train_idx]
+        val_df = annotations_file.iloc[val_idx]
+        
+        # Create subsets for train and validation data
+        train_subset = Subset(dataset, train_idx)
+        val_subset = Subset(dataset, val_idx)
+        
+        train_loader = DataLoader(train_subset, batch_size=500, shuffle=True)
+        val_loader = DataLoader(val_subset, batch_size=500, shuffle=False)
+        
+        # Initialize the Autoencoder model
+        model = AE()
+        
+        # Move model to GPU if available
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        model.to(device)
+        
+        # Define loss and optimizer
+        pos_weight, neg_weight = weights(annotations_file)
+        weight = torch.tensor([pos_weight, neg_weight], device=device)
+        criterion = nn.CrossEntropyLoss(weight=weight) #expect integers
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+        
+        # Train the autoencoder
+        train_autoencoder(model, train_loader, criterion, optimizer, device, epochs=15)
+        
+        # Calculate reconstruction errors on the validation set
+        val_errors = calculate_reconstruction_errors(model, val_loader, device)
+        
+        # Calculate adaptive threshold for anomaly detection
+        adaptive_threshold = calculate_adaptive_threshold(val_errors)
+        print(f"Adaptive threshold for anomaly detection: {adaptive_threshold:.4f}")
+        
+        # Save the model after training
+        filename = f"autoencoder_fold{fold + 1}.pth"
+        save_path = os.path.join("saved_models", filename)
+        torch.save(model.state_dict(), save_path)
+        print(f"Saved autoencoder model for fold {fold + 1} at {save_path}")
