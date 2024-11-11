@@ -248,35 +248,22 @@ if model_decision == 0:
 elif model_decision == 1:
     annotations_file = pd.read_csv(r"TRAIN_DATA_cropped.csv")
     data_dir = r"USABLE_cropped"
-    patient_groups = annotations_file.groupby('CODI')
     print("START LOAD FUNCTION")
-    
-    # Load images using the LoadAnnotated function
     img_list = LoadAnnotated(annotations_file, data_dir)
-    print("FINISH LOAD FUNCTION")
-    
-    # Define image transformations (resize to 224x224 and convert to tensor)
     transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
     print("START STANDARD DATASET")
-    
     dataset = StandardImageDataset(annotations_file, img_list, transform=transform)
     print("FINISH STANDARD DATASET")
-    
-    # Stratified K-Fold split
     print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
     fold_indices = []
     annotations_file['DENSITY'] = annotations_file['DENSITY'].map({-1: 0, 1: 1})  # map to binary labels
-    # Group by CODI and aggregate DENSITY labels for stratification
     grouped_annotations = annotations_file.groupby('CODI')
     grouped_labels = grouped_annotations['DENSITY'].first()  # Use the first label in each CODI group for stratification
-
     k_folds = 3
     strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
-
     fold_indices = []
     thresholds = []
-    fold_accuracies1 = []
-    
+    fold_accuracies1 = []  
     # Use grouped CODI data to split into stratified folds
     for fold, (train_codi_idx, val_codi_idx) in enumerate(strat_kfold.split(grouped_labels.index, grouped_labels)):
         print(f"Starting fold {fold + 1}/{k_folds}")
@@ -292,6 +279,9 @@ elif model_decision == 1:
         # Get index lists for train and validation patches
         train_idx = train_df.index.tolist()
         val_idx = val_df.index.tolist()
+
+        # Save fold indices
+        fold_indices.append({'train_auto': train_idx, 'val_auto': val_idx})
         
         # Create subsets for train and validation data
         train_subset = Subset(dataset, train_idx)
