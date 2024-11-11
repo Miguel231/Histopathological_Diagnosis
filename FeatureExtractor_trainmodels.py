@@ -12,6 +12,7 @@ from classifier import *
 import torch.nn as nn
 from sklearn.model_selection import StratifiedKFold
 from itertools import product
+from model_config import all_configurations
 
 def LoadAnnotated(df, data_dir):
     # Initialize an empty list to store images
@@ -147,29 +148,6 @@ if model_decision == 0:
     transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
     dataset = StandardImageDataset(all_annotations, img_list, transform=transform)
 
-    # Define model configurations
-    model_options = ["resnet50", "densenet201"]
-    num_layers_options = range(1, 4)
-    units_per_layer_options = [64, 128, 256]
-    dropout_options = [0.25]
-    all_configurations = []
-
-    # Generate all configurations
-    for num_layers in num_layers_options:
-        layer_configs = list(product(units_per_layer_options, repeat=num_layers))
-        if num_layers == 2:
-            layer_configs = [config for config in layer_configs if len(set(config)) == 2]
-        elif num_layers == 3:
-            layer_configs = [config for config in layer_configs if len(set(config)) > 1]
-        for model_name, layer_config, dropout in product(model_options, layer_configs, dropout_options):
-            configuration = {
-                "model_name": model_name,
-                "num_layers": num_layers,
-                "units_per_layer": list(layer_config),
-                "dropout": dropout
-            }
-            all_configurations.append(configuration)
-
     print(f"Total number of configurations: {len(all_configurations)}")
     print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
 
@@ -284,7 +262,7 @@ elif model_decision == 1:
 
     fold_indices = []
     thresholds = []
-    fold_accuracies = []
+    fold_accuracies1 = []
     
     # Use grouped CODI data to split into stratified folds
     for fold, (train_codi_idx, val_codi_idx) in enumerate(strat_kfold.split(grouped_labels.index, grouped_labels)):
@@ -328,15 +306,7 @@ elif model_decision == 1:
 
         # Calculate mean accuracy for the fold
         mean_fold_accuracy = np.mean(epoch_accuracies)
-        fold_accuracies.append(mean_fold_accuracy)
-        
-        # Calculate reconstruction errors on the validation set
-        val_errors = calculate_reconstruction_errors(model, val_loader, device)
-        
-        # Calculate adaptive threshold for anomaly detection
-        adaptive_threshold = calculate_adaptive_threshold(val_errors)
-        print(f"Adaptive threshold for anomaly detection: {adaptive_threshold:.4f}")
-        thresholds.append(adaptive_threshold)
+        fold_accuracies1.append(mean_fold_accuracy)
         
         # Save the model after training
         filename = f"autoencoder_fold{fold + 1}.pth"
