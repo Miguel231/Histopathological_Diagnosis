@@ -126,45 +126,36 @@ def train_model(custom_model, train_loader, criterion, optimizer, device, epochs
     
     return epoch_losses, epoch_accuracies
 
+# Track and save mean accuracy
+mean_accuracies = {}
+
 model_decision = int(input("Select the method you want to proceed ( 0 = classifier and 1 = autoencoder): "))
 if model_decision == 0:
-    #annotations_file = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\TRAIN_DATA.csv")
-    annotations_file = pd.read_csv(r"TRAIN_DATA.csv")
-
-    #data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis\USABLE"
+    # Load dataset and setup
+    annotations_file = pd.read_csv(r"TRAIN_DATA_annotated.csv")
     data_dir = r"USABLE_annotated"
-
-    patient_groups = annotations_file.groupby('Pat_ID')
     print("START LOAD FUNCTION")
-    # Load images as a list using LoadAnnotated
     img_list = LoadAnnotated(annotations_file, data_dir)
     print("FINISH LOAD FUNCTION")
-    # Define transformations
     transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
     print("START STANDARD DATASET")
     dataset = StandardImageDataset(annotations_file, img_list, transform=transform)
     print("FINISH STANDARD DATASET")
-    
-    # Define ranges for configurations
-    model_options = ["resnet50", "densenet201"]  # Model architectures
-    num_layers_options = range(1, 4)  # Number of layers (1 to 3)
-    units_per_layer_options = [64, 128, 256]  # Units per layer
-    dropout_options = [0.25]  # Dropout probabilities
-    all_configurations = []
-    # Folder to save models
-    save_folder = "saved_models"
-    os.makedirs(save_folder, exist_ok=True)
 
-    # Generate all possible configurations (for layers with different unit values)
+    # Define model configurations
+    model_options = ["resnet50", "densenet201"]
+    num_layers_options = range(1, 4)
+    units_per_layer_options = [64, 128, 256]
+    dropout_options = [0.25]
+    all_configurations = []
+
+    # Generate all configurations
     for num_layers in num_layers_options:
-        # Get layer configurations, filtering out unwanted combinations
         layer_configs = list(product(units_per_layer_options, repeat=num_layers))
-        # Filter out configurations where layers have repeated values based on num_layers
         if num_layers == 2:
             layer_configs = [config for config in layer_configs if len(set(config)) == 2]
         elif num_layers == 3:
             layer_configs = [config for config in layer_configs if len(set(config)) > 1]
-        # Now combine with model names and dropout options
         for model_name, layer_config, dropout in product(model_options, layer_configs, dropout_options):
             configuration = {
                 "model_name": model_name,
@@ -174,68 +165,89 @@ if model_decision == 0:
             }
             all_configurations.append(configuration)
 
-    # Print total number of configurations and details
     print(f"Total number of configurations: {len(all_configurations)}")
     print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
-    # Initialize fold_indices to save the indices of train and validation data for each fold
-    fold_indices = []
-    annotations_file['Presence'] = annotations_file['Presence'].map({-1: 0, 1: 1})  # map to binary labels
-    # 1. Define your patch labels
-    patch_labels = annotations_file['Presence'].values
-    # 2. Perform Stratified K-Fold split based on patch labels (Presence)
-    k_folds = 5
+
+    # Folder to save models
+    save_folder = "saved_models"
+    os.makedirs(save_folder, exist_ok=True)
+
+    # Map Presence values for binary classification
+    annotations_file['Presence'] = annotations_file['Presence'].map({-1: 0, 1: 1})
+
+    # Patient-level grouping
+    patient_groups = annotations_file.groupby('Pat_ID')
+    patient_labels = patient_groups['Presence'].apply(lambda x: x.iloc[0])  # First label for each patient (for stratification)
+
+    # Stratified K-Fold based on patients
+    k_folds = 3
     strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
-
-    # 3. Initialize fold_indices to save indices for train and validation sets
     fold_indices = []
+    thresholds = []
 
-    # Perform Stratified K-Fold split based on patch-level labels
-    for fold, (train_idx, val_idx) in enumerate(strat_kfold.split(annotations_file, patch_labels)):
+    # Perform Stratified K-Fold at patient level
+    for fold, (train_patient_idx, val_patient_idx) in enumerate(strat_kfold.split(patient_labels.index, patient_labels)):
         print(f"Starting fold {fold + 1}/{k_folds}")
-        # Collect patch indices for training and validation sets
-        train_df = annotations_file.iloc[train_idx]
-        val_df = annotations_file.iloc[val_idx]
-
-        # Save indices to fold_indices
+        
+        # Get train and validation patient IDs
+        train_patient_ids = patient_labels.index[train_patient_idx]
+        val_patient_ids = patient_labels.index[val_patient_idx]
+        
+        # Select patches based on train and validation patient IDs
+        train_df = annotations_file[annotations_file['Pat_ID'].isin(train_patient_ids)]
+        val_df = annotations_file[annotations_file['Pat_ID'].isin(val_patient_ids)]
+        
+        # Collect indices for train and validation patches
+        train_idx = train_df.index.tolist()
+        val_idx = val_df.index.tolist()
+        
+        # Save indices for this fold
         fold_indices.append({'train': train_idx, 'val': val_idx})
+        
+        # Create subsets for training and validation
+        train_subset = Subset(dataset, train_idx)
+        val_subset = Subset(dataset, val_idx)
 
-        # Now create subsets for training and validation based on these indices
-        train_subset = Subset(dataset, train_idx)  # Use your dataset object
-        val_subset = Subset(dataset, val_idx)  # Use your dataset object
-
-        # Define dataloaders for training and validation sets
+        # Data loaders
         train_loader = DataLoader(train_subset, batch_size=500, shuffle=True)
         val_loader = DataLoader(val_subset, batch_size=500, shuffle=False)
 
+        fold_accuracies = []
+        
         # Loop through each configuration
         for config_idx, config in enumerate(all_configurations, start=1):
             print(f"Training config {config_idx}/{len(all_configurations)} in fold {fold + 1}")
-            print(f"Configuration details: {config}")  
-            # Initialize the model for each configuration
+            print(f"Configuration details: {config}")
+            
+            # Initialize the custom model
             custom_model = CustomModel(
                 model_name=config["model_name"],
-                embedding_dim=None,  # Set to None, or change as needed
+                embedding_dim=None,
                 fc_layers=config["units_per_layer"],
                 activations=["relu"] * config["num_layers"],
-                batch_norms=[None] * config["num_layers"],  # Adjust batch norms if needed
+                batch_norms=[None] * config["num_layers"],
                 dropout=config["dropout"],
-                num_classes=2  # Assuming binary classification
+                num_classes=2
             )
             
-            # Define device
+            # Set device
             device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
             custom_model.to(device)
-
+            
             # Define loss and optimizer
             pos_weight, neg_weight = weights(annotations_file)
             weight = torch.tensor([pos_weight, neg_weight], device=device)
-            criterion = nn.CrossEntropyLoss(weight=weight) #expect integers
+            criterion = nn.CrossEntropyLoss(weight=weight)
             optimizer = torch.optim.Adam(custom_model.parameters(), lr=0.01, weight_decay=1e-8)
-
-            # Train the model and get the loss/accuracy per epoch
+            
+            # Train the model
             epoch_losses, epoch_accuracies = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=15)
+            
+            # Calculate and save mean accuracy for this fold
+            mean_fold_accuracy = np.mean(epoch_accuracies)
+            fold_accuracies.append(mean_fold_accuracy)
 
-            # Save the model weights after training
+            # Save the model after training
             filename = (f"{config['model_name']}_{config['num_layers']}layers_"
                         f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}.pth")
             save_path = os.path.join(save_folder, filename)
@@ -244,8 +256,8 @@ if model_decision == 0:
 
 elif model_decision == 1:
     annotations_file = pd.read_csv(r"TRAIN_DATA_cropped.csv")
-    data_dir = r"USABLE_annotated"
-    patient_groups = annotations_file.groupby('Pat_ID')
+    data_dir = r"USABLE_cropped"
+    patient_groups = annotations_file.groupby('CODI')
     print("START LOAD FUNCTION")
     
     # Load images using the LoadAnnotated function
@@ -262,21 +274,39 @@ elif model_decision == 1:
     # Stratified K-Fold split
     print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
     fold_indices = []
-    annotations_file['Presence'] = annotations_file['Presence'].map({-1: 0, 1: 1})  # map to binary labels
-    patch_labels = annotations_file['Presence'].values
-    k_folds = 5
+    annotations_file['DENSITY'] = annotations_file['DENSITY'].map({-1: 0, 1: 1})  # map to binary labels
+    # Group by CODI and aggregate DENSITY labels for stratification
+    grouped_annotations = annotations_file.groupby('CODI')
+    grouped_labels = grouped_annotations['DENSITY'].first()  # Use the first label in each CODI group for stratification
+
+    k_folds = 3
     strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
+
+    fold_indices = []
     thresholds = []
-    # Initialize fold_indices to save indices for each fold
-    for fold, (train_idx, val_idx) in enumerate(strat_kfold.split(annotations_file, patch_labels)):
+    fold_accuracies = []
+    
+    # Use grouped CODI data to split into stratified folds
+    for fold, (train_codi_idx, val_codi_idx) in enumerate(strat_kfold.split(grouped_labels.index, grouped_labels)):
         print(f"Starting fold {fold + 1}/{k_folds}")
-        train_df = annotations_file.iloc[train_idx]
-        val_df = annotations_file.iloc[val_idx]
+        
+        # Select train and validation CODI groups based on indices
+        train_codi = grouped_labels.index[train_codi_idx]
+        val_codi = grouped_labels.index[val_codi_idx]
+        
+        # Select patches in annotations_file where CODI is in the train or val CODI sets
+        train_df = annotations_file[annotations_file['CODI'].isin(train_codi)]
+        val_df = annotations_file[annotations_file['CODI'].isin(val_codi)]
+        
+        # Get index lists for train and validation patches
+        train_idx = train_df.index.tolist()
+        val_idx = val_df.index.tolist()
         
         # Create subsets for train and validation data
         train_subset = Subset(dataset, train_idx)
         val_subset = Subset(dataset, val_idx)
         
+        # Data loaders for train and validation subsets
         train_loader = DataLoader(train_subset, batch_size=500, shuffle=True)
         val_loader = DataLoader(val_subset, batch_size=500, shuffle=False)
         
@@ -290,11 +320,15 @@ elif model_decision == 1:
         # Define loss and optimizer
         pos_weight, neg_weight = weights(annotations_file)
         weight = torch.tensor([pos_weight, neg_weight], device=device)
-        criterion = nn.CrossEntropyLoss(weight=weight) #expect integers
+        criterion = nn.CrossEntropyLoss(weight=weight)
         optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
         
         # Train the autoencoder
-        train_autoencoder(model, train_loader, criterion, optimizer, device, epochs=15)
+        epoch_losses, epoch_accuracies = train_autoencoder(model, train_loader, criterion, optimizer, device, epochs=15)
+
+        # Calculate mean accuracy for the fold
+        mean_fold_accuracy = np.mean(epoch_accuracies)
+        fold_accuracies.append(mean_fold_accuracy)
         
         # Calculate reconstruction errors on the validation set
         val_errors = calculate_reconstruction_errors(model, val_loader, device)
@@ -303,6 +337,7 @@ elif model_decision == 1:
         adaptive_threshold = calculate_adaptive_threshold(val_errors)
         print(f"Adaptive threshold for anomaly detection: {adaptive_threshold:.4f}")
         thresholds.append(adaptive_threshold)
+        
         # Save the model after training
         filename = f"autoencoder_fold{fold + 1}.pth"
         save_path = os.path.join("saved_models", filename)
