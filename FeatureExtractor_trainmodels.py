@@ -133,6 +133,7 @@ model_decision = int(input("Select the method you want to proceed ( 0 = classifi
 if model_decision == 0:
     # Load dataset and setup
     annotations_file = pd.read_csv(r"TRAIN_DATA_annotated.csv")
+    annotations_file1 = pd.read_csv(r"TRAIN_DATA_cropped.csv")
     data_dir = r"USABLE_annotated"
     print("START LOAD FUNCTION")
     img_list = LoadAnnotated(annotations_file, data_dir)
