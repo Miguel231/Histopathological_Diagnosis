@@ -132,21 +132,34 @@ mean_accuracies = {}
 
 model_decision = int(input("Select the method you want to proceed ( 0 = classifier and 1 = autoencoder): "))
 if model_decision == 0:
+
+    """
+    #patient_data = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\TRAIN_DATA_cropped.csv")
+    #patient_data = patient_data.rename(columns={"CODI": "Pat_ID"})
     # Step 1: Load the Positive and Negative Patient Data
-    positive_patches = pd.read_csv("positive_patches.csv")
-    negative_patches = pd.read_csv("negative_patches.csv")
-
+    #positive_patches = pd.read_csv("positive_patches.csv")
+    #negative_patches = pd.read_csv("negative_patches.csv")
     # Concatenate to form a single DataFrame containing all patch-level data
-    all_annotations = pd.concat([positive_patches, negative_patches], ignore_index=True)
-
+    #all_annotations = pd.concat([positive_patches, negative_patches], ignore_index=True)
     # Set up binary Presence values for classification
-    all_annotations['Presence'] = all_annotations['Presence'].map({-1: 0, 1: 1})
+    #all_annotations['Presence'] = all_annotations['Presence'].map({-1: 0, 1: 1})
+    # Merge all_annotations with patient_data, adding `DENSITY` as a new column `patient_Diagnosis`
+    #all_annotations = all_annotations.merge(patient_data[['Pat_ID', 'DENSITAT']], on="Pat_ID", how="left")
+    # Rename `DENSITY` to `patient_Diagnosis`
+    #all_annotations = all_annotations.rename(columns={"DENSITAT": "patient_Diagnosis"})
+    # Save to a CSV file to inspect the merged data
+    #all_annotations.to_csv("all_annotations_with_patient_diagnosis.csv", index=False)
+    #print("Merged data with patient_Diagnosis column saved to 'all_annotations_with_patient_diagnosis.csv'.")
+    
+    """
+
+    annotated_csv = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\all_annotations_with_patient_diagnosis.csv")
 
     # Load all images from `USABLE_annotated` using all_annotations
     data_dir = r"USABLE_annotated"
-    img_list = LoadAnnotated(all_annotations, data_dir)  # Assuming this function loads all images for the patches specified
+    img_list = LoadAnnotated(annotated_csv, data_dir)  # Assuming this function loads all images for the patches specified
     transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
-    dataset = StandardImageDataset(all_annotations, img_list, transform=transform)
+    dataset = StandardImageDataset(annotated_csv, img_list, transform=transform)
 
     print(f"Total number of configurations: {len(all_configurations)}")
     print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
@@ -156,7 +169,7 @@ if model_decision == 0:
     os.makedirs(save_folder, exist_ok=True)
 
     # Group by `Pat_ID` and use the first `Presence` value for each patient as the stratification label
-    patient_labels = all_annotations.groupby('Pat_ID')['Presence'].first()
+    patient_labels = annotated_csv.groupby('Pat_ID')['patient_Diagnosis'].first()
 
     # Set up Stratified K-Fold at patient level
     k_folds = 3
@@ -171,8 +184,8 @@ if model_decision == 0:
         val_patient_ids = patient_labels.index[val_patient_idx]
         
         # Filter patches based on these patient IDs
-        train_df = all_annotations[all_annotations['Pat_ID'].isin(train_patient_ids)]
-        val_df = all_annotations[all_annotations['Pat_ID'].isin(val_patient_ids)]
+        train_df = annotated_csv[annotated_csv['Pat_ID'].isin(train_patient_ids)]
+        val_df = annotated_csv[annotated_csv['Pat_ID'].isin(val_patient_ids)]
         
         # Collect indices for train and validation patches
         train_idx = train_df.index.tolist()
@@ -212,7 +225,7 @@ if model_decision == 0:
             custom_model.to(device)
             
             # Define loss and optimizer
-            pos_weight, neg_weight = weights(all_annotations)  # Assumes this function calculates class weights
+            pos_weight, neg_weight = weights(annotated_csv)  # Assumes this function calculates class weights
             weight = torch.tensor([pos_weight, neg_weight], device=device)
             criterion = nn.CrossEntropyLoss(weight=weight)
             optimizer = torch.optim.Adam(custom_model.parameters(), lr=0.01, weight_decay=1e-8)
