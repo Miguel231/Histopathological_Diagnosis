@@ -131,17 +131,21 @@ mean_accuracies = {}
 
 model_decision = int(input("Select the method you want to proceed ( 0 = classifier and 1 = autoencoder): "))
 if model_decision == 0:
-    # Load dataset and setup
-    annotations_file = pd.read_csv(r"TRAIN_DATA_annotated.csv")
-    annotations_file1 = pd.read_csv(r"TRAIN_DATA_cropped.csv")
+    # Step 1: Load the Positive and Negative Patient Data
+    positive_patches = pd.read_csv("positive_patches.csv")
+    negative_patches = pd.read_csv("negative_patches.csv")
+
+    # Concatenate to form a single DataFrame containing all patch-level data
+    all_annotations = pd.concat([positive_patches, negative_patches], ignore_index=True)
+
+    # Set up binary Presence values for classification
+    all_annotations['Presence'] = all_annotations['Presence'].map({-1: 0, 1: 1})
+
+    # Load all images from `USABLE_annotated` using all_annotations
     data_dir = r"USABLE_annotated"
-    print("START LOAD FUNCTION")
-    img_list = LoadAnnotated(annotations_file, data_dir)
-    print("FINISH LOAD FUNCTION")
+    img_list = LoadAnnotated(all_annotations, data_dir)  # Assuming this function loads all images for the patches specified
     transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
-    print("START STANDARD DATASET")
-    dataset = StandardImageDataset(annotations_file, img_list, transform=transform)
-    print("FINISH STANDARD DATASET")
+    dataset = StandardImageDataset(all_annotations, img_list, transform=transform)
 
     # Define model configurations
     model_options = ["resnet50", "densenet201"]
@@ -169,40 +173,34 @@ if model_decision == 0:
     print(f"Total number of configurations: {len(all_configurations)}")
     print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
 
-    # Folder to save models
+    # Set up folder to save models
     save_folder = "saved_models"
     os.makedirs(save_folder, exist_ok=True)
 
-    # Map Presence values for binary classification
-    annotations_file['Presence'] = annotations_file['Presence'].map({-1: 0, 1: 1})
+    # Group by `Pat_ID` and use the first `Presence` value for each patient as the stratification label
+    patient_labels = all_annotations.groupby('Pat_ID')['Presence'].first()
 
-    # Patient-level grouping
-    patient_groups = annotations_file.groupby('Pat_ID')
-    patient_labels = patient_groups['Presence'].apply(lambda x: x.iloc[0])  # First label for each patient (for stratification)
-
-    # Stratified K-Fold based on patients
+    # Set up Stratified K-Fold at patient level
     k_folds = 3
     strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
     fold_indices = []
-    thresholds = []
 
-    # Perform Stratified K-Fold at patient level
     for fold, (train_patient_idx, val_patient_idx) in enumerate(strat_kfold.split(patient_labels.index, patient_labels)):
         print(f"Starting fold {fold + 1}/{k_folds}")
         
-        # Get train and validation patient IDs
+        # Select train and validation patient IDs
         train_patient_ids = patient_labels.index[train_patient_idx]
         val_patient_ids = patient_labels.index[val_patient_idx]
         
-        # Select patches based on train and validation patient IDs
-        train_df = annotations_file[annotations_file['Pat_ID'].isin(train_patient_ids)]
-        val_df = annotations_file[annotations_file['Pat_ID'].isin(val_patient_ids)]
+        # Filter patches based on these patient IDs
+        train_df = all_annotations[all_annotations['Pat_ID'].isin(train_patient_ids)]
+        val_df = all_annotations[all_annotations['Pat_ID'].isin(val_patient_ids)]
         
         # Collect indices for train and validation patches
         train_idx = train_df.index.tolist()
         val_idx = val_df.index.tolist()
         
-        # Save indices for this fold
+        # Save fold indices
         fold_indices.append({'train': train_idx, 'val': val_idx})
         
         # Create subsets for training and validation
@@ -214,8 +212,8 @@ if model_decision == 0:
         val_loader = DataLoader(val_subset, batch_size=500, shuffle=False)
 
         fold_accuracies = []
-        
-        # Loop through each configuration
+
+        # Loop through each model configuration
         for config_idx, config in enumerate(all_configurations, start=1):
             print(f"Training config {config_idx}/{len(all_configurations)} in fold {fold + 1}")
             print(f"Configuration details: {config}")
@@ -236,7 +234,7 @@ if model_decision == 0:
             custom_model.to(device)
             
             # Define loss and optimizer
-            pos_weight, neg_weight = weights(annotations_file)
+            pos_weight, neg_weight = weights(all_annotations)  # Assumes this function calculates class weights
             weight = torch.tensor([pos_weight, neg_weight], device=device)
             criterion = nn.CrossEntropyLoss(weight=weight)
             optimizer = torch.optim.Adam(custom_model.parameters(), lr=0.01, weight_decay=1e-8)
@@ -254,6 +252,7 @@ if model_decision == 0:
             save_path = os.path.join(save_folder, filename)
             torch.save(custom_model.state_dict(), save_path)
             print(f"Saved model: {filename}")
+
 
 elif model_decision == 1:
     annotations_file = pd.read_csv(r"TRAIN_DATA_cropped.csv")
