@@ -13,6 +13,9 @@ import torch.nn as nn
 from sklearn.model_selection import StratifiedKFold
 from itertools import product
 from model_config import all_configurations
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 
 def LoadAnnotated(df, data_dir):
     # Initialize an empty list to store images
@@ -134,7 +137,7 @@ model_decision = int(input("Select the method you want to proceed ( 0 = classifi
 if model_decision == 0:
 
     """
-    #patient_data = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\TRAIN_DATA_cropped.csv")
+    #patient_data = pd.read_csv(r"C:/Users/larar/OneDrive/Documentos/Escritorio/Histopathological_Diagnosis-5/TRAIN_DATA_cropped.csv")
     #patient_data = patient_data.rename(columns={"CODI": "Pat_ID"})
     # Step 1: Load the Positive and Negative Patient Data
     #positive_patches = pd.read_csv("positive_patches.csv")
@@ -166,6 +169,10 @@ if model_decision == 0:
 
     # Set up folder to save models
     save_folder = "saved_models"
+    os.makedirs(save_folder, exist_ok=True)
+
+    # Set up folder to save validations
+    save_folder = "validation_data"
     os.makedirs(save_folder, exist_ok=True)
 
     # Group by `Pat_ID` and use the first `Presence` value for each patient as the stratification label
@@ -202,9 +209,14 @@ if model_decision == 0:
         train_loader = DataLoader(train_subset, batch_size=500, shuffle=True)
         val_loader = DataLoader(val_subset, batch_size=500, shuffle=False)
 
+        # Save the validation indices (from 'val_patient_ids') and the associated dataset (e.g., validation annotations)
+        val_subset_indices = {'val_patient_ids': val_patient_ids, 'val_indices': val_idx}
+        torch.save(val_subset_indices, os.path.join(save_folder, f"val_subset_indices_fold{fold+1}.pth"))
+
         fold_accuracies = []
 
         # Loop through each model configuration
+        
         for config_idx, config in enumerate(all_configurations, start=1):
             print(f"Training config {config_idx}/{len(all_configurations)} in fold {fold + 1}")
             print(f"Configuration details: {config}")
@@ -290,6 +302,10 @@ elif model_decision == 1:
         # Data loaders for train and validation subsets
         train_loader = DataLoader(train_subset, batch_size=500, shuffle=True)
         val_loader = DataLoader(val_subset, batch_size=500, shuffle=False)
+
+        # Save the validation indices (from 'val_patient_ids') and the associated dataset (e.g., validation annotations)
+        val_subset_indices = {'val_patient_ids': val_codi, 'val_indices': val_idx}
+        torch.save(val_subset_indices, os.path.join("validation_data", f"val_subset_indices__autoencoder_fold{fold+1}.pth"))
         
         # Initialize the Autoencoder model
         model = AE()
