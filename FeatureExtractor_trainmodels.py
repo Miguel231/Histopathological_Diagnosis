@@ -151,9 +151,10 @@ def plot_loss_curve(epoch_losses, model_filename):
     plt.close()
 
 def train_model(custom_model, train_loader, criterion, optimizer, device, epochs=5):
-    # To store the loss and accuracy for each epoch
+    # To store the loss, accuracy and recall for each epoch
     epoch_losses = []
     epoch_accuracies = []
+    epoch_recalls = []  
 
     # Training loop
     for epoch in range(epochs):
@@ -161,6 +162,8 @@ def train_model(custom_model, train_loader, criterion, optimizer, device, epochs
         train_loss = 0.0
         correct_train = 0
         total_train = 0
+        true_positives = 0  # True positives for recall calculation
+        false_negatives = 0  # False negatives for recall calculation
         
         for images, labels in train_loader:
             images, labels = images.to(device), labels.to(device)
@@ -182,17 +185,28 @@ def train_model(custom_model, train_loader, criterion, optimizer, device, epochs
             correct_train += (predicted == labels).sum().item()
             total_train += labels.size(0)
 
+            # Track true positives and false negatives for recall calculation
+            true_positives += ((predicted == 1) & (labels == 1)).sum().item()
+            false_negatives += ((predicted == 0) & (labels == 1)).sum().item()
+
         # Average loss and accuracy for the epoch
         avg_train_loss = train_loss / total_train
         train_accuracy = correct_train / total_train * 100
 
+        # Calculate recall for the epoch
+        if (true_positives + false_negatives) > 0:
+            train_recall = true_positives / (true_positives + false_negatives) * 100
+        else:
+            train_recall = 0
+
         # Store the loss and accuracy for the current epoch
         epoch_losses.append(avg_train_loss)
         epoch_accuracies.append(train_accuracy)
+        epoch_recalls.append(train_recall)
 
-        print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_train_loss:.4f}, Train Accuracy: {train_accuracy:.2f}%")
+        print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_train_loss:.4f}, Train Accuracy: {train_accuracy:.2f}%, Train Recall: {train_recall:.2f}%")
     
-    return epoch_losses, epoch_accuracies
+    return epoch_losses, epoch_accuracies, epoch_recalls
 
 # Track and save mean accuracy
 model_accuracies = {}
@@ -307,7 +321,7 @@ if model_decision == 0:
             optimizer = torch.optim.Adam(custom_model.parameters(), lr=1e-4)
             
             # Train the model
-            epoch_losses, epoch_accuracies = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=25)
+            epoch_losses, epoch_accuracies, epoch_recall = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=25)
             
             model_filename = (f"{config['model_name']}_{config['num_layers']}layers_"
                         f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}")
