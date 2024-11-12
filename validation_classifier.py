@@ -280,7 +280,7 @@ if mode == 0:
     val_subset_indices = torch.load(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\validation_data\val_subset_indices_fold1.pth")
     val_subset = Subset(dataset, val_subset_indices['val_indices'])
     # Create the validation DataLoader using the same batch size and shuffle settings
-    val_loader = DataLoader(val_subset, batch_size=500, shuffle=False)
+    val_loader = DataLoader(val_subset, batch_size=32, shuffle=False)
     # Define the device (CUDA or CPU)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     saved_models = "saved_models"

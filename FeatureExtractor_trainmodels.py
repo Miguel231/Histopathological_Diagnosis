@@ -32,8 +32,8 @@ class Tee:
         for fileobj in self.fileobjs:
             fileobj.flush()
 
-log_file = open(r'Git\Histopathological_Diagnosis\training_log.txt', 'w')  # Abre el archivo en modo escritura
-sys.stdout = Tee(sys.stdout, log_file)  # Redirige las impresiones a este archivo
+#log_file = open(r'Git\Histopathological_Diagnosis\training_log.txt', 'w')  # Abre el archivo en modo escritura
+#sys.stdout = Tee(sys.stdout, log_file)  # Redirige las impresiones a este archivo
 
 def LoadAnnotated(df, data_dir):
     # Initialize an empty list to store images
@@ -63,8 +63,10 @@ def LoadAnnotated_1(df, data_dir):
     # Iterate over each row in the DataFrame
     for _, row in df.iterrows():
         pat_id = row['CODI']  # Extract Pat_ID (patient identifier)
+        print(f"Processing patient ID: {pat_id}")
         label = row['DENSITAT']  # Extract DENSITY (patient diagnosis/label)
         
+        # Loop through each file in the directory
         for filename in os.listdir(data_dir):
             # Check if the filename starts with the Pat_ID (assuming the pattern 'Pat_ID_*')
             if filename.startswith(f"{pat_id}_"):
@@ -72,13 +74,19 @@ def LoadAnnotated_1(df, data_dir):
                 
                 # Check if the file exists
                 if os.path.exists(file_path):
-                    image = Image.open(file_path).convert("RGB")  # Open the image and convert to RGB
-                    images.append(image)
-                    labels.append(label)
+                    try:
+                        # Open the image and convert to RGB
+                        with Image.open(file_path) as img:
+                            img = img.convert("RGB")
+                            images.append(img)
+                            labels.append(label)
+                    except Exception as e:
+                        print(f"Error loading image {file_path}: {e}")
                 else:
                     print(f"Warning: File {file_path} not found.")
     
     return images, labels
+
 
 class StandardImageDataset(Dataset):
     def __init__(self, annotations_file, img_list, transform=None):
@@ -236,7 +244,7 @@ if model_decision == 0:
 
     # Set up Stratified K-Fold at patient level
     k_folds = 3
-    strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
+    strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=False)
     fold_indices = []
     fold_accuracies = {}
     for fold, (train_patient_idx, val_patient_idx) in enumerate(strat_kfold.split(patient_labels.index, patient_labels)):
@@ -262,7 +270,7 @@ if model_decision == 0:
         val_subset = Subset(dataset, val_idx)
 
         # Data loaders
-        train_loader = DataLoader(train_subset, batch_size=32, shuffle=True)
+        train_loader = DataLoader(train_subset, batch_size=32, shuffle=False)
         val_loader = DataLoader(val_subset, batch_size=32, shuffle=False)
 
         # Save the validation indices (from 'val_patient_ids') and the associated dataset (e.g., validation annotations)
@@ -296,7 +304,7 @@ if model_decision == 0:
             pos_weight, neg_weight = weights(annotated_csv)  # Assumes this function calculates class weights
             weight = torch.tensor([pos_weight, neg_weight], device=device)
             criterion = nn.CrossEntropyLoss(weight=weight)
-            optimizer = torch.optim.Adam(custom_model.parameters(), lr=5e-7, weight_decay=1e-8)
+            optimizer = torch.optim.Adam(custom_model.parameters(), lr=1e-4)
             
             # Train the model
             epoch_losses, epoch_accuracies = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=25)
@@ -402,4 +410,4 @@ elif model_decision == 1:
         print(f"Saved autoencoder model for fold {fold + 1} at {save_path}")
 
 
-log_file.close()
+#log_file.close()
