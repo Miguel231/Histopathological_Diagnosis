@@ -86,6 +86,22 @@ def weights(annotated_file):
 
     return positives/c_general, negatives/c_general
 
+def plot_loss_curve(epoch_losses, model_filename):
+    # Plot the loss curve
+    plt.figure(figsize=(8, 6))
+    plt.plot(range(1, len(epoch_losses) + 1), epoch_losses, marker='o', color='b', label="Train Loss")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.title(f"Loss Curve for {model_filename}")
+    plt.legend()
+
+    # Save the plot in the 'saved_models' folder
+    save_path = os.path.join("saved_models", f"{model_filename}_loss_curve.png")
+    os.makedirs("saved_models", exist_ok=True)
+    plt.savefig(save_path)
+    print(f"Saved loss curve to {save_path}")
+    plt.close()
+
 def train_model(custom_model, train_loader, criterion, optimizer, device, epochs=5):
     # To store the loss and accuracy for each epoch
     epoch_losses = []
@@ -182,7 +198,7 @@ if model_decision == 0:
     k_folds = 3
     strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
     fold_indices = []
-
+    fold_Accuracies = {}
     for fold, (train_patient_idx, val_patient_idx) in enumerate(strat_kfold.split(patient_labels.index, patient_labels)):
         print(f"Starting fold {fold + 1}/{k_folds}")
         
@@ -245,9 +261,14 @@ if model_decision == 0:
             # Train the model
             epoch_losses, epoch_accuracies = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=15)
             
+            model_filename = (f"{config['model_name']}_{config['num_layers']}layers_"
+                        f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}")
+            plot_loss_curve(epoch_losses, model_filename)
+
             # Calculate and save mean accuracy for this fold
             mean_fold_accuracy = np.mean(epoch_accuracies)
             fold_accuracies.append(mean_fold_accuracy)
+    
 
             # Save the model after training
             filename = (f"{config['model_name']}_{config['num_layers']}layers_"
@@ -255,7 +276,7 @@ if model_decision == 0:
             save_path = os.path.join(save_folder, filename)
             torch.save(custom_model.state_dict(), save_path)
             print(f"Saved model: {filename}")
-
+        fold_Accuracies[{fold + 1}] = fold_accuracies
 
 elif model_decision == 1:
     annotations_file = pd.read_csv(r"TRAIN_DATA_cropped.csv")
