@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import PIL
 from PIL import Image
 import torch
 from torchvision import transforms
@@ -15,7 +16,7 @@ from itertools import product
 from model_config import all_configurations
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
-
+warnings.filterwarnings("ignore")
 
 def LoadAnnotated(df, data_dir):
     # Initialize an empty list to store images
@@ -38,7 +39,29 @@ def LoadAnnotated(df, data_dir):
     
     return IMS
 
-
+def LoadAnnotated_1(df, data_dir):
+    images = []
+    labels = []
+    
+    # Iterate over each row in the DataFrame
+    for _, row in df.iterrows():
+        pat_id = row['CODI']  # Extract Pat_ID (patient identifier)
+        label = row['DENSITAT']  # Extract DENSITY (patient diagnosis/label)
+        
+        for filename in os.listdir(data_dir):
+            # Check if the filename starts with the Pat_ID (assuming the pattern 'Pat_ID_*')
+            if filename.startswith(f"{pat_id}_"):
+                file_path = os.path.join(data_dir, filename)
+                
+                # Check if the file exists
+                if os.path.exists(file_path):
+                    image = Image.open(file_path).convert("RGB")  # Open the image and convert to RGB
+                    images.append(image)
+                    labels.append(label)
+                else:
+                    print(f"Warning: File {file_path} not found.")
+    
+    return images, labels
 
 class StandardImageDataset(Dataset):
     def __init__(self, annotations_file, img_list, transform=None):
@@ -147,7 +170,7 @@ def train_model(custom_model, train_loader, criterion, optimizer, device, epochs
     return epoch_losses, epoch_accuracies
 
 # Track and save mean accuracy
-mean_accuracies = {}
+model_accuracies = {}
 
 model_decision = int(input("Select the method you want to proceed ( 0 = classifier and 1 = autoencoder): "))
 if model_decision == 0:
@@ -198,7 +221,7 @@ if model_decision == 0:
     k_folds = 3
     strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
     fold_indices = []
-    fold_Accuracies = {}
+    fold_accuracies = {}
     for fold, (train_patient_idx, val_patient_idx) in enumerate(strat_kfold.split(patient_labels.index, patient_labels)):
         print(f"Starting fold {fold + 1}/{k_folds}")
         
@@ -229,7 +252,7 @@ if model_decision == 0:
         val_subset_indices = {'val_patient_ids': val_patient_ids, 'val_indices': val_idx}
         torch.save(val_subset_indices, os.path.join(save_folder, f"val_subset_indices_fold{fold+1}.pth"))
 
-        fold_accuracies = []
+        fold_accuracies[fold + 1] = []
 
         # Loop through each model configuration
         
@@ -267,31 +290,38 @@ if model_decision == 0:
 
             # Calculate and save mean accuracy for this fold
             mean_fold_accuracy = np.mean(epoch_accuracies)
-            fold_accuracies.append(mean_fold_accuracy)
-    
-
+            fold_accuracies[fold + 1].append(mean_fold_accuracy)
             # Save the model after training
             filename = (f"{config['model_name']}_{config['num_layers']}layers_"
                         f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}.pth")
             save_path = os.path.join(save_folder, filename)
             torch.save(custom_model.state_dict(), save_path)
             print(f"Saved model: {filename}")
-        fold_Accuracies[{fold + 1}] = fold_accuracies
 
 elif model_decision == 1:
     annotations_file = pd.read_csv(r"TRAIN_DATA_cropped.csv")
-    data_dir = r"USABLE_cropped"
+    data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\USABLE_cropped"
+    # Check if the directory exists
+    if os.path.exists(data_dir):
+        print(f"Directory found: {data_dir}")
+        # Count the number of image files in the folder
+        image_files = [f for f in os.listdir(data_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+        num_images = len(image_files)
+        print(f"Number of images in the directory: {num_images}")
+    else:
+        print(f"Directory not found: {data_dir}")
     print("START LOAD FUNCTION")
-    img_list = LoadAnnotated(annotations_file, data_dir)
+    images_list, dict = LoadAnnotated_1(annotations_file, data_dir)
     transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
     print("START STANDARD DATASET")
-    dataset = StandardImageDataset(annotations_file, img_list, transform=transform)
+    dataset = StandardImageDataset(annotations_file, images_list, transform=transform)
+    print("LENGHT LIST IMAGES", len(images_list))
     print("FINISH STANDARD DATASET")
     print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
     fold_indices = []
-    annotations_file['DENSITY'] = annotations_file['DENSITY'].map({-1: 0, 1: 1})  # map to binary labels
+    annotations_file['DENSITAT'] = annotations_file['DENSITAT'].map({-1: 0, 1: 1})  # map to binary labels
     grouped_annotations = annotations_file.groupby('CODI')
-    grouped_labels = grouped_annotations['DENSITY'].first()  # Use the first label in each CODI group for stratification
+    grouped_labels = grouped_annotations['DENSITAT'].first()  # Use the first label in each CODI group for stratification
     k_folds = 3
     strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=True)
     fold_indices = []

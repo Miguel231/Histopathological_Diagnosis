@@ -16,28 +16,38 @@ from itertools import product
 class AE(nn.Module):
     def __init__(self):
         super(AE, self).__init__()
+        
+        # Encoder
         self.encoder = nn.Sequential(
-            nn.Linear(224 * 224 * 3, 128),  # Assuming images are resized to 224x224 and RGB
+            nn.Conv2d(3, 64, kernel_size=3, stride=2, padding=1),  # (224, 224) -> (112, 112)
             nn.ReLU(),
-            nn.Linear(128, 64),
+            nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1),  # (112, 112) -> (56, 56)
             nn.ReLU(),
-            nn.Linear(64, 36),
+            nn.Conv2d(128, 256, kernel_size=3, stride=2, padding=1),  # (56, 56) -> (28, 28)
             nn.ReLU(),
-            nn.Linear(36, 18),
+            nn.Conv2d(256, 512, kernel_size=3, stride=2, padding=1),  # (28, 28) -> (14, 14)
             nn.ReLU(),
-            nn.Linear(18, 9)
+            nn.Conv2d(512, 1024, kernel_size=3, stride=2, padding=1),  # (14, 14) -> (7, 7)
+            nn.ReLU(),
+            nn.Flatten(),
+            nn.Linear(1024 * 7 * 7, 9)  # Bottleneck layer, compression
         )
+        
+        # Decoder
         self.decoder = nn.Sequential(
-            nn.Linear(9, 18),
+            nn.Linear(9, 1024 * 7 * 7),  # Reshape to the dimension before convolution
             nn.ReLU(),
-            nn.Linear(18, 36),
+            nn.Unflatten(1, (1024, 7, 7)),
+            nn.ConvTranspose2d(1024, 512, kernel_size=3, stride=2, padding=1, output_padding=1),  # (7, 7) -> (14, 14)
             nn.ReLU(),
-            nn.Linear(36, 64),
+            nn.ConvTranspose2d(512, 256, kernel_size=3, stride=2, padding=1, output_padding=1),  # (14, 14) -> (28, 28)
             nn.ReLU(),
-            nn.Linear(64, 128),
+            nn.ConvTranspose2d(256, 128, kernel_size=3, stride=2, padding=1, output_padding=1),  # (28, 28) -> (56, 56)
             nn.ReLU(),
-            nn.Linear(128, 224 * 224 * 3),  # Assuming output is 224x224 RGB
-            nn.Sigmoid()
+            nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2, padding=1, output_padding=1),  # (56, 56) -> (112, 112)
+            nn.ReLU(),
+            nn.ConvTranspose2d(64, 3, kernel_size=3, stride=2, padding=1, output_padding=1),  # (112, 112) -> (224, 224)
+            nn.Sigmoid()  # Use Sigmoid to scale output between 0 and 1
         )
 
     def forward(self, x):
@@ -51,7 +61,7 @@ def train_autoencoder(model, train_loader, criterion, optimizer, device, epochs=
         model.train()
         train_loss = 0.0
         for images, _ in train_loader:
-            images = images.view(images.size(0), -1).to(device)  # Flatten the image
+            images = images.to(device)  # No need to flatten anymore, the model handles it
             optimizer.zero_grad()
             outputs = model(images)
             loss = criterion(outputs, images)
@@ -61,3 +71,4 @@ def train_autoencoder(model, train_loader, criterion, optimizer, device, epochs=
 
         avg_train_loss = train_loss / len(train_loader.dataset)
         print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_train_loss:.4f}")
+
