@@ -6,8 +6,9 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from torch.utils.data import DataLoader
 from torchvision import transforms
 import matplotlib.pyplot as plt
-from FeatureExtractor_trainmodels import *
+from FeatureExtractor_trainmodels import CustomModel, StandardImageDataset, Subset, LoadAnnotated
 import seaborn as sns
+
 
 # Function to load the model from a .pth file
 def load_model(model_path, device,config):
@@ -208,7 +209,7 @@ def evaluate_models(saved_models_folder, save_folder, val_loader, device, mode):
     print(f"Saved all evaluation results to {evaluation_df_file}")
 
 
-mode = input("Do you want to validate (0 = classifier and 1 = autoencoder)?: ")
+mode = int(input("Do you want to validate (0 = classifier and 1 = autoencoder)?: "))
 
 if mode == "0":
     annotated_csv = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\all_annotations_with_patient_diagnosis.csv")
@@ -231,3 +232,4 @@ if mode == "0":
     # Folder containing the saved models
     # Start evaluating all models
     evaluate_models(saved_models,save_folder, val_loader, device)
+
