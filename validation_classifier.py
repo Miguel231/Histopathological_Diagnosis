@@ -167,7 +167,8 @@ def evaluate_model_with_classifier(model, val_loader, device):
 
             # Store predictions by patient ID
             for i, prob in enumerate(probs):
-                pat_id = val_loader.dataset.img_labels.iloc[i]['Pat_ID']
+                # Access img_labels through the original dataset
+                pat_id = val_loader.dataset.dataset.img_labels.iloc[i]['Pat_ID']
 
                 if pat_id not in patient_predictions:
                     patient_predictions[pat_id] = []
