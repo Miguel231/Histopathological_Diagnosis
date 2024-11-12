@@ -45,22 +45,6 @@ class AE(nn.Module):
         decoded = self.decoder(encoded)
         return decoded
 
-def calculate_reconstruction_errors(model, data_loader, device):
-    model.eval()
-    errors = []
-    with torch.no_grad():
-        for images, _ in data_loader:
-            images = images.view(images.size(0), -1).to(device)  # Flatten the image for the autoencoder
-            output = model(images)
-            error = torch.mean((output - images) ** 2, dim=1)
-            errors.extend(error.cpu().numpy())
-    return np.array(errors)
-
-def calculate_adaptive_threshold(errors, factor=1.5):
-    mean_error = np.mean(errors)
-    std_error = np.std(errors)
-    return mean_error + factor * std_error
-
 def train_autoencoder(model, train_loader, criterion, optimizer, device, epochs=5):
     # Training loop for the autoencoder
     for epoch in range(epochs):
