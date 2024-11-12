@@ -2,13 +2,65 @@ import os
 import torch
 import pandas as pd
 import numpy as np
+import PIL
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, roc_curve, auc
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset, Dataset
 from torchvision import transforms
 import matplotlib.pyplot as plt
-from FeatureExtractor_trainmodels import CustomModel, StandardImageDataset, Subset, LoadAnnotated
+from classifier import CustomModel
 import seaborn as sns
+from PIL import Image
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore")
 
+def LoadAnnotated(df, data_dir):
+    # Initialize an empty list to store images
+    IMS = []
+    
+    # Iterate over each row in the CSV
+    for _, row in df.iterrows():
+        # Construct the path to the image file
+        pat_id = row['Pat_ID']
+        window_id = str(row['Window_ID']).zfill(5)
+        file_path = os.path.join(data_dir, f"{pat_id}_{window_id}.png")
+        
+        # Check if the file exists
+        if os.path.exists(file_path):
+            # Read the image and append to IMS (as a PIL object)
+            image = Image.open(file_path).convert("RGB")  # Convert to RGB format if necessary
+            IMS.append(image)
+        else:
+            print(f"Warning: File {file_path} not found.")
+    
+    return IMS
+
+class StandardImageDataset(Dataset):
+    def __init__(self, annotations_file, img_list, transform=None):
+        # Load the annotations from the Excel file
+        self.img_labels = annotations_file
+        self.img_list = img_list
+        self.transform = transform
+
+    def __len__(self):
+        # Return the total number of samples
+        return len(self.img_labels)
+
+    def __getitem__(self, idx):
+        # Get the image in PIL format from preloaded list
+        image = self.img_list[idx]
+        
+        # Apply any image transformations (such as ToTensor, Resize)
+        if self.transform:
+            image = self.transform(image)  # Transform image as defined in the transform parameter
+        
+        # Convert image to float tensor with dtype=torch.float32
+        if isinstance(image, torch.Tensor):
+            image = image.float()
+        
+        label = self.img_labels.iloc[idx, 2]  # Label is in the third column
+        label = 0 if label == -1 else label  # Convert -1 (if present) to 0 (negative class). as we are using crossentropyloss
+        return image, label
 
 # Function to load the model from a .pth file
 def load_model(model_path, device,config):
@@ -116,6 +168,7 @@ def evaluate_model_with_classifier(model, val_loader, device):
             # Store predictions by patient ID
             for i, prob in enumerate(probs):
                 pat_id = val_loader.dataset.img_labels.iloc[i]['Pat_ID']
+
                 if pat_id not in patient_predictions:
                     patient_predictions[pat_id] = []
                     patient_labels[pat_id] = labels.cpu().numpy()[i]
@@ -175,11 +228,13 @@ def evaluate_models(saved_models_folder, save_folder, val_loader, device, mode):
             model = load_model(model_path, device,config)
 
             # Evaluate model based on its type (autoencoder vs classifier)
-            if mode == "1":  # Autoencoder
+            if mode == 1:  # Autoencoder
+                print("AUTOENCODER")
                 accuracy, precision, recall, f1, conf_matrix, roc_auc, optimal_threshold = evaluate_model_with_autoencoder(model, val_loader, device)
-            elif mode == "0":  # Classifier
+            elif mode == 0:  # Classifier
+                print("CLASSIFIER")
                 accuracy, precision, recall, f1, conf_matrix, roc_auc, optimal_threshold = evaluate_model_with_classifier(model, val_loader, device)
-
+                print("ACCURACY",accuracy)
             # Save evaluation metrics
             evaluation_results = {
                 "accuracy": accuracy,
@@ -211,7 +266,7 @@ def evaluate_models(saved_models_folder, save_folder, val_loader, device, mode):
 
 mode = int(input("Do you want to validate (0 = classifier and 1 = autoencoder)?: "))
 
-if mode == "0":
+if mode == 0:
     annotated_csv = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\all_annotations_with_patient_diagnosis.csv")
     # Load all images from `USABLE_annotated` using all_annotations
     data_dir = r"USABLE_annotated"
@@ -231,5 +286,4 @@ if mode == "0":
     saved_models = "saved_models"
     # Folder containing the saved models
     # Start evaluating all models
-    evaluate_models(saved_models,save_folder, val_loader, device)
-
+    evaluate_models(saved_models,save_folder, val_loader, device,mode)

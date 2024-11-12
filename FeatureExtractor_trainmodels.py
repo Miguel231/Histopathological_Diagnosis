@@ -5,11 +5,10 @@ from PIL import Image
 import torch
 from torchvision import transforms
 import numpy as np
-from torch.utils.data import Dataset
-from torch.utils.data import DataLoader, Subset
+from torch.utils.data import DataLoader, Subset, Dataset
 import matplotlib.pyplot as plt
 from autoencoder import *
-from classifier import *
+from classifier import CustomModel
 import torch.nn as nn
 from sklearn.model_selection import StratifiedKFold
 from itertools import product
