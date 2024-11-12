@@ -250,7 +250,7 @@ if model_decision == 0:
     os.makedirs(save_folder, exist_ok=True)
 
     # Set up folder to save validations
-    save_folder = "validation_data"
+    save_folder = "validation_and_training_data"
     os.makedirs(save_folder, exist_ok=True)
 
     # Group by `Pat_ID` and use the first `Presence` value for each patient as the stratification label
@@ -275,10 +275,24 @@ if model_decision == 0:
         # Collect indices for train and validation patches
         train_idx = train_df.index.tolist()
         val_idx = val_df.index.tolist()
-        
-        # Save fold indices
-        fold_indices.append({'train': train_idx, 'val': val_idx})
-        
+
+        # For the training set, you already have the necessary information
+        train_labels = train_df['patient_Diagnosis'].values.tolist()  # Patient-level labels for the training set
+        train_subset_info = {
+            'train_patient_ids': train_patient_ids,
+            'train_labels': train_labels,  # Save the patient-level labels
+            'train_indices': train_idx
+        }
+        torch.save(train_subset_info, os.path.join(save_folder, f"train_subset_info_fold{fold+1}.pth"))
+        # For the validation set, add the patient-level labels along with indices
+        val_labels = val_df['patient_Diagnosis'].values.tolist()  # Patient-level labels for the validation set
+        val_subset_info = {
+            'val_patient_ids': val_patient_ids,
+            'val_labels': val_labels,  # Save the patient-level labels
+            'val_indices': val_idx
+        }
+        torch.save(val_subset_info, os.path.join(save_folder, f"val_subset_info_fold{fold+1}.pth"))
+
         # Create subsets for training and validation
         train_subset = Subset(dataset, train_idx)
         val_subset = Subset(dataset, val_idx)
