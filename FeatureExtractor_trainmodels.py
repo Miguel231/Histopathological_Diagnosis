@@ -17,6 +17,24 @@ import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore")
 
+import sys
+
+class Tee:
+    def _init_(self, *fileobjs):
+        self.fileobjs = fileobjs
+
+    def write(self, message):
+        for fileobj in self.fileobjs:
+            fileobj.write(message)
+            fileobj.flush()  # Asegúrate de que el mensaje se escribe inmediatamente
+
+    def flush(self):
+        for fileobj in self.fileobjs:
+            fileobj.flush()
+
+log_file = open(r'Git\Histopathological_Diagnosis\training_log.txt', 'w')  # Abre el archivo en modo escritura
+sys.stdout = Tee(sys.stdout, log_file)  # Redirige las impresiones a este archivo
+
 def LoadAnnotated(df, data_dir):
     # Initialize an empty list to store images
     IMS = []
@@ -244,8 +262,8 @@ if model_decision == 0:
         val_subset = Subset(dataset, val_idx)
 
         # Data loaders
-        train_loader = DataLoader(train_subset, batch_size=500, shuffle=True)
-        val_loader = DataLoader(val_subset, batch_size=500, shuffle=False)
+        train_loader = DataLoader(train_subset, batch_size=32, shuffle=True)
+        val_loader = DataLoader(val_subset, batch_size=32, shuffle=False)
 
         # Save the validation indices (from 'val_patient_ids') and the associated dataset (e.g., validation annotations)
         val_subset_indices = {'val_patient_ids': val_patient_ids, 'val_indices': val_idx}
@@ -278,10 +296,10 @@ if model_decision == 0:
             pos_weight, neg_weight = weights(annotated_csv)  # Assumes this function calculates class weights
             weight = torch.tensor([pos_weight, neg_weight], device=device)
             criterion = nn.CrossEntropyLoss(weight=weight)
-            optimizer = torch.optim.Adam(custom_model.parameters(), lr=0.01, weight_decay=1e-8)
+            optimizer = torch.optim.Adam(custom_model.parameters(), lr=5e-7, weight_decay=1e-8)
             
             # Train the model
-            epoch_losses, epoch_accuracies = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=15)
+            epoch_losses, epoch_accuracies = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=25)
             
             model_filename = (f"{config['model_name']}_{config['num_layers']}layers_"
                         f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}")
@@ -382,3 +400,6 @@ elif model_decision == 1:
         save_path = os.path.join("saved_models", filename)
         torch.save(model.state_dict(), save_path)
         print(f"Saved autoencoder model for fold {fold + 1} at {save_path}")
+
+
+log_file.close()
