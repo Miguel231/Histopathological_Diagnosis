@@ -1,0 +1,964 @@
+Select the method you want to proceed ( 0 = classifier and 1 = autoencoder): START LOAD FUNCTION
+FINISH LOAD FUNCTION
+START STANDARD DATASET
+FINISH STANDARD DATASET
+Total number of configurations: 66
+CREATE TRAIN AND TEST SUBSET WITH KFOLD
+Training config 1/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 1, 'units_per_layer': [64], 'dropout': 0.25}
+Epoch 1/15, Train loss: 0.7629, Train Accuracy: 75.24%
+Epoch 2/15, Train loss: 0.7500, Train Accuraty: 76.29%
+Epoch 3/15, Train loss: 0.7552, Train Accuracy: 77.18%
+Epoch 4/15, Train loss: 0.7511, Train Accuracy: 78.77%
+Eросh 5/15, Train loss: 0.7493, Train Accuracy: 79.36%
+Eросh 6/15, Train loss: 0.7473, Train Accuracy: 80.96%
+Epoch 7/15, Train loss: 0.7461, Train Accuracy: 82.81%
+Eросh 8/15, Train Loss: 0.7420, Train Accuracy: 83.10%
+Epoch 9/15, Train loss: 0.7391, Train Accuracy: 85.37%
+Epoch 10/15, Train loss: 0.7346, Train Accuracy: 86.25%
+Epoch 11/15, Train loss: 0.7322, Train Accuracy: 86.76%
+Epoch 12/15, Train loss: 0.7322, Train Accuracy: 87.52%
+Epoch 13/15, Train loss: 0.7322, Train Accuracy: 88.48%
+Epoch 14/15, Train loss: 0.7322, Train Accuracy: 88.99%
+Epoch 15/15, Train loss: 0.7322, Train Accuracy: 89.58%
+Saved model: resnet50_1layers_64_dropout0.25_fold1.pth
+Training config 2/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 1, 'units_per_layer': [128], 'dropout': 0.25}
+Epoch 1/15, Train loss: 0.7629, Train Accuracy: 76.46%
+Epoch 2/15, Train loss: 0.7500, Train Accuraty: 78.81%
+Epoch 3/15, Train loss: 0.7552, Train Accuracy: 80.58%
+Epoch 4/15, Train loss: 0.7511, Train Accuracy: 81.34%
+Eросh 5/15, Train loss: 0.7493, Train Accuracy: 83.73%
+Eросh 6/15, Train loss: 0.7473, Train Accuracy: 84.57%
+Epoch 7/15, Train loss: 0.7461, Train Accuracy: 86.93%
+Eросh 8/15, Train Loss: 0.7420, Train Accuracy: 86.93%
+Epoch 9/15, Train loss: 0.7391, Train Accuracy: 87.56%
+Epoch 10/15, Train loss: 0.7346, Train Accuracy: 89.87%
+Epoch 11/15, Train loss: 0.7322, Train Accuracy: 89.45%
+Epoch 12/15, Train loss: 0.7322, Train Accuracy: 90.84%
+Epoch 13/15, Train loss: 0.7322, Train Accuracy: 91.13%
+Epoch 14/15, Train loss: 0.7322, Train Accuracy: 91.34%
+Epoch 15/15, Train loss: 0.7322, Train Accuracy: 91.97%
+Saved model: resnet50_1layers_128_dropout0.25_fold1.pth
+Training config 3/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 1, 'units_per_layer': [256], 'dropout': 0.25}
+Epoch 1/15, Train loss: 0.7629, Train Accuracy: 88.69%
+Epoch 2/15, Train loss: 0.7500, Train Accuraty: 90.42%
+Epoch 3/15, Train loss: 0.7552, Train Accuracy: 91.59%
+Epoch 4/15, Train loss: 0.7511, Train Accuracy: 91.76%
+Eросh 5/15, Train loss: 0.7493, Train Accuracy: 92.56%
+Eросh 6/15, Train loss: 0.7473, Train Accuracy: 92.43%
+Epoch 7/15, Train loss: 0.7461, Train Accuracy: 93.15%
+Eросh 8/15, Train Loss: 0.7420, Train Accuracy: 93.53%
+Epoch 9/15, Train loss: 0.7391, Train Accuracy: 93.65%
+Epoch 10/15, Train loss: 0.7346, Train Accuracy: 94.03%
+Epoch 11/15, Train loss: 0.7322, Train Accuracy: 93.95%
+Epoch 12/15, Train loss: 0.7322, Train Accuracy: 94.16%
+Epoch 13/15, Train loss: 0.7322, Train Accuracy: 94.37%
+Epoch 14/15, Train loss: 0.7322, Train Accuracy: 94.41%
+Epoch 15/15, Train loss: 0.7322, Train Accuracy: 94.41%
+Saved model: resnet50_1layers_256_dropout0.25_fold1.pth
+Training config 4/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 1, 'units_per_layer': [64], 'dropout': 0.25}
+Epoch 1/15, Train loss: 0.7629, Train Accuracy: 21.73%
+Epoch 2/15, Train loss: 0.7500, Train Accuraty: 21.56%
+Epoch 3/15, Train loss: 0.7552, Train Accuracy: 22.74%
+Epoch 4/15, Train loss: 0.7511, Train Accuracy: 23.92%
+Eросh 5/15, Train loss: 0.7493, Train Accuracy: 25.05%
+Eросh 6/15, Train loss: 0.7473, Train Accuracy: 26.23%
+Epoch 7/15, Train loss: 0.7461, Train Accuracy: 26.31%
+Eросh 8/15, Train Loss: 0.7420, Train Accuracy: 27.24%
+Epoch 9/15, Train loss: 0.7391, Train Accuracy: 28.96%
+Epoch 10/15, Train loss: 0.7346, Train Accuracy: 31.32%
+Epoch 11/15, Train loss: 0.7322, Train Accuracy: 32.20%
+Epoch 12/15, Train loss: 0.7322, Train Accuracy: 31.40%
+Epoch 13/15, Train loss: 0.7322, Train Accuracy: 34.34%
+Epoch 14/15, Train loss: 0.7322, Train Accuracy: 35.44%
+Epoch 15/15, Train loss: 0.7322, Train Accuracy: 36.19%
+Saved model: densenet201_1layers_64_dropout0.25_fold1.pth
+Training config 5/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 1, 'units_per_layer': [128], 'dropout': 0.25}
+Epoch 1/15, Train Loss: 0.7417, Train Accuracy: 33.17%
+Epoch 2/15, Train Loss: 0.7359, Train Accuracy: 34.22%
+Epoch 3/15, Train Loss: 0.7310, Train Accuracy: 36.57%
+Epoch 4/15, Train Loss: 0.7203, Train Accuracy: 36.06%
+Epoch 5/15, Train Loss: 0.7214, Train Accuracy: 39.09%
+Epoch 6/15, Train Loss: 0.7191, Train Accuracy: 40.73%
+Epoch 7/15, Train Loss: 0.7130, Train Accuracy: 41.76%
+Epoch 8/15, Train Loss: 0.7094, Train Accuracy: 45.23%
+Epoch 9/15, Train Loss: 0.7074, Train Accuracy: 46.66%
+Epoch 10/15, Train Loss: 0.7010, Train Accuracy: 48.59%
+Epoch 11/15, Train Loss: 0.6984, Train Accuracy: 49.09%
+Epoch 12/15, Train Loss: 0.6943, Train Accuracy: 51.24%
+Epoch 13/15, Train Loss: 0.6897, Train Accuracy: 53.01%
+Epoch 14/15, Train Loss: 0.6881, Train Accuracy: 53.51%
+Epoch 15/15, Train Loss: 0.6837, Train Accuracy: 55.82%
+Saved model: densenet201_1layers_128_dropout0.25_fold1.pth
+Training config 6/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 1, 'units_per_layer': [256], 'dropout': 0.25}
+Epoch 1/15, Train Loss: 0.7647, Train Accuracy: 75.58%
+Epoch 2/15, Train Loss: 0.7359, Train Accuracy: 76.42%
+Epoch 3/15, Train Loss: 0.7310, Train Accuracy: 78.27%
+Epoch 4/15, Train Loss: 0.7203, Train Accuracy: 78.98%
+Epoch 5/15, Train Loss: 0.7214, Train Accuracy: 79.82%
+Epoch 6/15, Train Loss: 0.7191, Train Accuracy: 81.80%
+Epoch 7/15, Train Loss: 0.7130, Train Accuracy: 82.60%
+Epoch 8/15, Train Loss: 0.7094, Train Accuracy: 84.49%
+Epoch 9/15, Train Loss: 0.7074, Train Accuracy: 84.49%
+Epoch 10/15, Train Loss: 0.7010, Train Accuracy: 86.04%
+Epoch 11/15, Train Loss: 0.6984, Train Accuracy: 86.93%
+Epoch 12/15, Train Loss: 0.6943, Train Accuracy: 86.93%
+Epoch 13/15, Train Loss: 0.6897, Train Accuracy: 87.56%
+Epoch 14/15, Train Loss: 0.6881, Train Accuracy: 88.82%
+Epoch 15/15, Train Loss: 0.6837, Train Accuracy: 88.27%
+Saved model: densenet201_1layers_256_dropout0.25_fold1.pth
+Training config 7/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 2, 'units_per_layer': [64, 128], 'dropout': 0.25}
+Epoch 1/15, Train Loss: 0.6430, Train Accuracy: 85.54%
+Epoch 2/15, Train Loss: 0.6367, Train Accuracy: 87.89%
+Epoch 3/15, Train Loss: 0.6270, Train Accuracy: 90.04%
+Epoch 4/15, Train Loss: 0.6190, Train Accuracy: 91.47%
+Epoch 5/15, Train Loss: 0.6093, Train Accuracy: 92.64%
+Epoch 6/15, Train Loss: 0.6024, Train Accuracy: 93.23%
+Epoch 7/15, Train Loss: 0.5932, Train Accuracy: 93.61%
+Epoch 8/15, Train Loss: 0.5840, Train Accuracy: 93.86%
+Epoch 9/15, Train Loss: 0.5761, Train Accuracy: 93.99%
+Epoch 10/15, Train Loss: 0.5688, Train Accuracy: 94.16%
+Epoch 11/15, Train Loss: 0.5596, Train Accuracy: 94.28%
+Epoch 12/15, Train Loss: 0.5527, Train Accuracy: 94.24%
+Epoch 13/15, Train Loss: 0.5408, Train Accuracy: 94.37%
+Epoch 14/15, Train Loss: 0.5326, Train Accuracy: 94.41%
+Epoch 15/15, Train Loss: 0.5243, Train Accuracy: 94.49%
+Saved model: resnet50_2layers_64_128_dropout0.25_fold1.pth
+Training config 8/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 2, 'units_per_layer': [64, 256], 'dropout': 0.25}
+CUDA está disponible. Using GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.6784, Train Accuracy: 7.48%
+Epoch 2/15, Train Loss: 0.6693, Train Accuracy: 8.45%
+Epoch 3/15, Train Loss: 0.6606, Train Accuracy: 10.05%
+Epoch 4/15, Train Loss: 0.7488, Train Accuracy: 12.95%
+Epoch 5/15, Train Loss: 0.7427, Train Accuracy: 16.14%
+Epoch 6/15, Train Loss: 0.7323, Train Accuracy: 20.55%
+Epoch 7/15, Train Loss: 0.7245, Train Accuracy: 25.22%
+Epoch 8/15, Train Loss: 0.7133, Train Accuracy: 34.64%
+Epoch 9/15, Train Loss: 0.7054, Train Accuracy: 39.89%
+Epoch 10/15, Train Loss: 0.6989, Train Accuracy: 45.57%
+Epoch 11/15, Train Loss: 0.6871, Train Accuracy: 56.37%
+Epoch 12/15, Train Loss: 0.6784, Train Accuracy: 62.46%
+Epoch 13/15, Train Loss: 0.6712, Train Accuracy: 66.33%
+Epoch 14/15, Train Loss: 0.6601, Train Accuracy: 73.98%
+Epoch 15/15, Train Loss: 0.6521, Train Accuracy: 78.94%
+Saved model: resnet50_2layers_64_256_dropout0.25_fold1.pth
+Training config 9/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 2, 'units_per_layer': [128, 64], 'dropout': 0.25}
+CUDA está disponible. Using GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.6218, Train Accuracy: 93.53%
+Epoch 1/15, Train Loss: 0.6218, Train Accuracy: 93.53%
+CUDA está disponible. Using GPU: NVIDIA GeForce RTX 2060
+CUDA está disponible. Using GPU: NVIDIA GeForce RTX 2060
+CUDA está disponible. Using GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.6218, Train Accuracy: 93.53%
+Epoch 2/15, Train Loss: 0.6120, Train Accuracy: 94.07%
+Epoch 3/15, Train Loss: 0.6022, Train Accuracy: 94.33%
+Epoch 4/15, Train Loss: 0.5938, Train Accuracy: 94.49%
+Epoch 5/15, Train Loss: 0.5843, Train Accuracy: 94.59%
+Epoch 6/15, Train Loss: 0.5753, Train Accuracy: 94.49%
+Epoch 7/15, Train Loss: 0.5664, Train Accuracy: 94.49%
+Epoch 8/15, Train Loss: 0.5662, Train Accuracy: 94.49%
+Epoch 9/15, Train Loss: 0.5476, Train Accuracy: 94.49%
+Epoch 10/15, Train Loss: 0.5371, Train Accuracy: 94.49%
+Epoch 11/15, Train Loss: 0.5278, Train Accuracy: 94.49%
+Epoch 12/15, Train Loss: 0.5158, Train Accuracy: 94.49%
+Epoch 13/15, Train Loss: 0.5050, Train Accuracy: 94.49%
+Epoch 14/15, Train Loss: 0.4949, Train Accuracy: 94.49%
+Epoch 15/15, Train Loss: 0.4847, Train Accuracy: 94.49%
+Saved model: resnet50_2layers_128_64_dropout0.25_fold1.pth
+Training config 10/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 2, 'units_per_layer': [128, 256], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.7512, Train Accuracy: 9.42%
+Epoch 2/15, Train Loss: 0.7389, Train Accuracy: 12.53%
+Epoch 3/15, Train Loss: 0.7266, Train Accuracy: 20.01%
+Epoch 4/15, Train Loss: 0.7150, Train Accuracy: 28.04%
+Epoch 5/15, Train Loss: 0.7056, Train Accuracy: 37.33%
+Epoch 6/15, Train Loss: 0.6954, Train Accuracy: 48.21%
+Epoch 7/15, Train Loss: 0.6857, Train Accuracy: 59.35%
+Epoch 8/15, Train Loss: 0.6745, Train Accuracy: 71.04%
+Epoch 9/15, Train Loss: 0.6642, Train Accuracy: 79.07%
+Epoch 10/15, Train Loss: 0.6547, Train Accuracy: 85.12%
+Epoch 11/15, Train Loss: 0.6458, Train Accuracy: 89.32%
+Epoch 12/15, Train Loss: 0.6377, Train Accuracy: 90.58%
+Epoch 13/15, Train Loss: 0.6267, Train Accuracy: 92.52%
+Epoch 14/15, Train Loss: 0.6184, Train Accuracy: 93.48%
+Epoch 15/15, Train Loss: 0.6093, Train Accuracy: 93.74%
+Saved model: resnet50_2layers_128_256_dropout0.25_fold1.pth
+Training config 11/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 2, 'units_per_layer': [256, 64], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.5769, Train Accuracy: 94.49%
+Epoch 2/15, Train Loss: 0.5598, Train Accuracy: 94.45%
+Epoch 3/15, Train Loss: 0.5427, Train Accuracy: 94.49%
+Epoch 4/15, Train Loss: 0.5255, Train Accuracy: 94.49%
+Epoch 5/15, Train Loss: 0.5042, Train Accuracy: 94.49%
+Epoch 6/15, Train Loss: 0.4861, Train Accuracy: 94.49%
+Epoch 7/15, Train Loss: 0.4696, Train Accuracy: 94.49%
+Epoch 8/15, Train Loss: 0.4513, Train Accuracy: 94.49%
+Epoch 9/15, Train Loss: 0.4322, Train Accuracy: 94.49%
+Epoch 10/15, Train Loss: 0.4131, Train Accuracy: 94.49%
+Epoch 11/15, Train Loss: 0.3953, Train Accuracy: 94.49%
+Epoch 12/15, Train Loss: 0.3796, Train Accuracy: 94.49%
+Epoch 13/15, Train Loss: 0.3617, Train Accuracy: 94.49%
+Epoch 14/15, Train Loss: 0.3462, Train Accuracy: 94.49%
+Epoch 15/15, Train Loss: 0.3311, Train Accuracy: 94.49%
+Saved model: resnet50_2layers_256_64_dropout0.25_fold1.pth
+Training config 12/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 2, 'units_per_layer': [256, 128], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.7099, Train Accuracy: 35.44%
+Epoch 2/15, Train Loss: 0.6913, Train Accuracy: 53.17%
+Epoch 3/15, Train Loss: 0.6764, Train Accuracy: 67.00%
+Epoch 4/15, Train Loss: 0.6595, Train Accuracy: 78.73%
+Epoch 5/15, Train Loss: 0.6452, Train Accuracy: 86.04%
+Epoch 6/15, Train Loss: 0.6298, Train Accuracy: 90.29%
+Epoch 7/15, Train Loss: 0.6153, Train Accuracy: 92.69%
+Epoch 8/15, Train Loss: 0.6014, Train Accuracy: 93.69%
+Epoch 9/15, Train Loss: 0.5867, Train Accuracy: 94.07%
+Epoch 10/15, Train Loss: 0.5707, Train Accuracy: 94.49%
+Epoch 11/15, Train Loss: 0.5564, Train Accuracy: 94.41%
+Epoch 12/15, Train Loss: 0.5412, Train Accuracy: 94.49%
+Epoch 13/15, Train Loss: 0.5267, Train Accuracy: 94.45%
+Epoch 14/15, Train Loss: 0.5113, Train Accuracy: 94.45%
+Epoch 15/15, Train Loss: 0.4960, Train Accuracy: 94.49%
+Saved model: resnet50_2layers_256_128_dropout0.25_fold1.pth
+Training config 13/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 2, 'units_per_layer': [64, 128], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.6972, Train Accuracy: 46.45%
+Epoch 2/15, Train Loss: 0.6839, Train Accuracy: 58.01%
+Epoch 3/15, Train Loss: 0.6719, Train Accuracy: 67.51%
+Epoch 4/15, Train Loss: 0.6606, Train Accuracy: 74.86%
+Epoch 5/15, Train Loss: 0.6490, Train Accuracy: 81.29%
+Epoch 6/15, Train Loss: 0.6388, Train Accuracy: 85.04%
+Epoch 7/15, Train Loss: 0.6245, Train Accuracy: 89.16%
+Epoch 8/15, Train Loss: 0.6122, Train Accuracy: 91.38%
+Epoch 9/15, Train Loss: 0.6005, Train Accuracy: 92.81%
+Epoch 10/15, Train Loss: 0.5889, Train Accuracy: 93.27%
+Epoch 11/15, Train Loss: 0.5763, Train Accuracy: 94.07%
+Epoch 12/15, Train Loss: 0.5624, Train Accuracy: 94.07%
+Epoch 13/15, Train Loss: 0.5519, Train Accuracy: 94.24%
+Epoch 14/15, Train Loss: 0.5404, Train Accuracy: 94.37%
+Epoch 15/15, Train Loss: 0.5281, Train Accuracy: 94.41%
+Saved model: densenet201_2layers_64_128_dropout0.25_fold1.pth
+Training config 14/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 2, 'units_per_layer': [64, 256], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.6441, Train Accuracy: 84.49%
+Epoch 2/15, Train Loss: 0.6354, Train Accuracy: 86.89%
+Epoch 3/15, Train Loss: 0.6256, Train Accuracy: 89.66%
+Epoch 4/15, Train Loss: 0.6140, Train Accuracy: 92.18%
+Epoch 5/15, Train Loss: 0.6028, Train Accuracy: 93.06%
+Epoch 6/15, Train Loss: 0.5914, Train Accuracy: 93.53%
+Epoch 7/15, Train Loss: 0.5818, Train Accuracy: 93.86%
+Epoch 8/15, Train Loss: 0.5708, Train Accuracy: 94.33%
+Epoch 9/15, Train Loss: 0.5561, Train Accuracy: 94.33%
+Epoch 10/15, Train Loss: 0.5457, Train Accuracy: 94.49%
+Epoch 11/15, Train Loss: 0.5318, Train Accuracy: 94.49%
+Epoch 12/15, Train Loss: 0.5200, Train Accuracy: 94.45%
+Epoch 13/15, Train Loss: 0.5073, Train Accuracy: 94.49%
+Epoch 14/15, Train Loss: 0.4928, Train Accuracy: 94.49%
+Epoch 15/15, Train Loss: 0.4796, Train Accuracy: 94.49%
+Saved model: densenet201_2layers_64_256_dropout0.25_fold1.pth
+Training config 15/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 2, 'units_per_layer': [128, 64], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.6770, Train Accuracy: 61.96%
+Epoch 2/15, Train Loss: 0.6644, Train Accuracy: 72.97%
+Epoch 3/15, Train Loss: 0.6504, Train Accuracy: 79.82%
+Epoch 4/15, Train Loss: 0.6375, Train Accuracy: 85.58%
+Epoch 5/15, Train Loss: 0.6252, Train Accuracy: 89.95%
+Epoch 6/15, Train Loss: 0.6116, Train Accuracy: 91.89%
+Epoch 7/15, Train Loss: 0.5971, Train Accuracy: 92.56%
+Epoch 8/15, Train Loss: 0.5848, Train Accuracy: 93.57%
+Epoch 9/15, Train Loss: 0.5722, Train Accuracy: 93.78%
+Epoch 10/15, Train Loss: 0.5571, Train Accuracy: 94.28%
+Epoch 11/15, Train Loss: 0.5444, Train Accuracy: 94.41%
+Epoch 12/15, Train Loss: 0.5297, Train Accuracy: 94.45%
+Epoch 13/15, Train Loss: 0.5147, Train Accuracy: 94.41%
+Epoch 14/15, Train Loss: 0.5016, Train Accuracy: 94.49%
+Epoch 15/15, Train Loss: 0.4881, Train Accuracy: 94.49%
+Saved model: densenet201_2layers_128_64_dropout0.25_fold1.pth
+Training config 16/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 2, 'units_per_layer': [128, 256], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.6004, Train Accuracy: 93.74%
+Epoch 2/15, Train Loss: 0.5870, Train Accuracy: 94.07%
+Epoch 3/15, Train Loss: 0.5732, Train Accuracy: 94.45%
+Epoch 4/15, Train Loss: 0.5605, Train Accuracy: 94.45%
+Epoch 5/15, Train Loss: 0.5469, Train Accuracy: 94.49%
+Epoch 6/15, Train Loss: 0.5336, Train Accuracy: 94.49%
+Epoch 7/15, Train Loss: 0.5215, Train Accuracy: 94.49%
+Epoch 8/15, Train Loss: 0.5064, Train Accuracy: 94.49%
+Epoch 9/15, Train Loss: 0.4939, Train Accuracy: 94.49%
+Epoch 10/15, Train Loss: 0.4817, Train Accuracy: 94.49%
+Epoch 11/15, Train Loss: 0.4667, Train Accuracy: 94.49%
+Epoch 12/15, Train Loss: 0.4519, Train Accuracy: 94.49%
+Epoch 13/15, Train Loss: 0.4378, Train Accuracy: 94.49%
+Epoch 14/15, Train Loss: 0.4244, Train Accuracy: 94.49%
+Epoch 15/15, Train Loss: 0.4103, Train Accuracy: 94.49%
+Saved model: densenet201_2layers_128_256_dropout0.25_fold1.pth
+Training config 17/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 2, 'units_per_layer': [256, 64], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.6405, Train Accuracy: 88.57%
+Epoch 2/15, Train Loss: 0.6242, Train Accuracy: 92.48%
+Epoch 3/15, Train Loss: 0.6095, Train Accuracy: 93.91%
+Epoch 4/15, Train Loss: 0.5915, Train Accuracy: 94.45%
+Epoch 5/15, Train Loss: 0.5757, Train Accuracy: 94.37%
+Epoch 6/15, Train Loss: 0.5597, Train Accuracy: 94.49%
+Epoch 7/15, Train Loss: 0.5439, Train Accuracy: 94.49%
+Epoch 8/15, Train Loss: 0.5265, Train Accuracy: 94.49%
+Epoch 9/15, Train Loss: 0.5099, Train Accuracy: 94.49%
+Epoch 10/15, Train Loss: 0.4937, Train Accuracy: 94.49%
+Epoch 11/15, Train Loss: 0.4759, Train Accuracy: 94.49%
+Epoch 12/15, Train Loss: 0.4597, Train Accuracy: 94.49%
+Epoch 13/15, Train Loss: 0.4455, Train Accuracy: 94.49%
+Epoch 14/15, Train Loss: 0.4260, Train Accuracy: 94.49%
+Epoch 15/15, Train Loss: 0.4113, Train Accuracy: 94.49%
+Saved model: densenet201_2layers_256_64_dropout0.25_fold1.pth
+Training config 18/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 2, 'units_per_layer': [256, 128], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.6130, Train Accuracy: 93.61%
+Epoch 2/15, Train Loss: 0.5991, Train Accuracy: 94.16%
+Epoch 3/15, Train Loss: 0.5843, Train Accuracy: 94.45%
+Epoch 4/15, Train Loss: 0.5684, Train Accuracy: 94.49%
+Epoch 5/15, Train Loss: 0.5543, Train Accuracy: 94.49%
+Epoch 6/15, Train Loss: 0.5386, Train Accuracy: 94.49%
+Epoch 7/15, Train Loss: 0.5230, Train Accuracy: 94.49%
+Epoch 8/15, Train Loss: 0.5070, Train Accuracy: 94.49%
+Epoch 9/15, Train Loss: 0.4910, Train Accuracy: 94.49%
+Epoch 10/15, Train Loss: 0.4766, Train Accuracy: 94.49%
+Epoch 11/15, Train Loss: 0.4582, Train Accuracy: 94.49%
+Epoch 12/15, Train Loss: 0.4433, Train Accuracy: 94.49%
+Epoch 13/15, Train Loss: 0.4263, Train Accuracy: 94.49%
+Epoch 14/15, Train Loss: 0.4121, Train Accuracy: 94.49%
+Epoch 15/15, Train Loss: 0.3943, Train Accuracy: 94.49%
+Saved model: densenet201_2layers_256_128_dropout0.25_fold1.pth
+Training config 19/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [64, 64, 128], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.7577, Train Accuracy: 5.93%
+Epoch 2/15, Train Loss: 0.7502, Train Accuracy: 7.27%
+Epoch 3/15, Train Loss: 0.7434, Train Accuracy: 10.00%
+Epoch 4/15, Train Loss: 0.7355, Train Accuracy: 13.87%
+Epoch 5/15, Train Loss: 0.7273, Train Accuracy: 18.87%
+Epoch 6/15, Train Loss: 0.7170, Train Accuracy: 28.04%
+Epoch 7/15, Train Loss: 0.7069, Train Accuracy: 36.53%
+Epoch 8/15, Train Loss: 0.6961, Train Accuracy: 46.07%
+Epoch 9/15, Train Loss: 0.6841, Train Accuracy: 55.82%
+Epoch 10/15, Train Loss: 0.6732, Train Accuracy: 63.05%
+Epoch 11/15, Train Loss: 0.6591, Train Accuracy: 70.41%
+Epoch 12/15, Train Loss: 0.6477, Train Accuracy: 75.12%
+Epoch 13/15, Train Loss: 0.6329, Train Accuracy: 80.41%
+Epoch 14/15, Train Loss: 0.6191, Train Accuracy: 83.82%
+Epoch 15/15, Train Loss: 0.6069, Train Accuracy: 86.63%
+Saved model: resnet50_3layers_64_64_128_dropout0.25_fold1.pth
+Training config 20/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [64, 64, 256], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.7442, Train Accuracy: 5.72%
+Epoch 2/15, Train Loss: 0.7411, Train Accuracy: 6.09%
+Epoch 3/15, Train Loss: 0.7373, Train Accuracy: 6.56%
+Epoch 4/15, Train Loss: 0.7331, Train Accuracy: 7.78%
+Epoch 5/15, Train Loss: 0.7287, Train Accuracy: 9.46%
+Epoch 6/15, Train Loss: 0.7237, Train Accuracy: 12.32%
+Epoch 7/15, Train Loss: 0.7183, Train Accuracy: 16.81%
+Epoch 8/15, Train Loss: 0.7134, Train Accuracy: 22.11%
+Epoch 9/15, Train Loss: 0.7075, Train Accuracy: 30.22%
+Epoch 10/15, Train Loss: 0.7026, Train Accuracy: 38.71%
+Epoch 11/15, Train Loss: 0.6938, Train Accuracy: 48.30%
+Epoch 12/15, Train Loss: 0.6886, Train Accuracy: 53.34%
+Epoch 13/15, Train Loss: 0.6807, Train Accuracy: 62.42%
+Epoch 14/15, Train Loss: 0.6728, Train Accuracy: 69.19%
+Epoch 15/15, Train Loss: 0.6616, Train Accuracy: 77.85%
+Saved model: resnet50_3layers_64_64_256_dropout0.25_fold1.pth
+Training config 21/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [64, 128, 64], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.5845, Train Accuracy: 94.49%
+Epoch 2/15, Train Loss: 0.5790, Train Accuracy: 94.49%
+Epoch 3/15, Train Loss: 0.5739, Train Accuracy: 94.49%
+Epoch 4/15, Train Loss: 0.5680, Train Accuracy: 94.49%
+Epoch 5/15, Train Loss: 0.5637, Train Accuracy: 94.49%
+Epoch 6/15, Train Loss: 0.5581, Train Accuracy: 94.49%
+Epoch 7/15, Train Loss: 0.5537, Train Accuracy: 94.49%
+Epoch 8/15, Train Loss: 0.5479, Train Accuracy: 94.49%
+Epoch 9/15, Train Loss: 0.5423, Train Accuracy: 94.49%
+Epoch 10/15, Train Loss: 0.5377, Train Accuracy: 94.49%
+Epoch 11/15, Train Loss: 0.5314, Train Accuracy: 94.49%
+Epoch 12/15, Train Loss: 0.5253, Train Accuracy: 94.49%
+Epoch 13/15, Train Loss: 0.5182, Train Accuracy: 94.49%
+Epoch 14/15, Train Loss: 0.5133, Train Accuracy: 94.49%
+Epoch 15/15, Train Loss: 0.5059, Train Accuracy: 94.49%
+Saved model: resnet50_3layers_64_128_64_dropout0.25_fold1.pth
+Training config 22/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [64, 128, 128], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.6836, Train Accuracy: 64.06%
+Epoch 2/15, Train Loss: 0.6779, Train Accuracy: 70.95%
+Epoch 3/15, Train Loss: 0.6737, Train Accuracy: 75.96%
+Epoch 4/15, Train Loss: 0.6676, Train Accuracy: 80.71%
+Epoch 5/15, Train Loss: 0.6620, Train Accuracy: 84.41%
+Epoch 6/15, Train Loss: 0.6574, Train Accuracy: 86.17%
+Epoch 7/15, Train Loss: 0.6521, Train Accuracy: 88.27%
+Epoch 8/15, Train Loss: 0.6482, Train Accuracy: 89.11%
+Epoch 9/15, Train Loss: 0.6410, Train Accuracy: 90.12%
+Epoch 10/15, Train Loss: 0.6351, Train Accuracy: 91.38%
+Epoch 11/15, Train Loss: 0.6304, Train Accuracy: 92.14%
+Epoch 12/15, Train Loss: 0.6237, Train Accuracy: 92.01%
+Epoch 13/15, Train Loss: 0.6156, Train Accuracy: 93.06%
+Epoch 14/15, Train Loss: 0.6101, Train Accuracy: 93.23%
+Epoch 15/15, Train Loss: 0.6026, Train Accuracy: 93.65%
+Saved model: resnet50_3layers_64_128_128_dropout0.25_fold1.pth
+Training config 23/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [64, 128, 256], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.6752, Train Accuracy: 78.73%
+Epoch 2/15, Train Loss: 0.6702, Train Accuracy: 83.73%
+Epoch 3/15, Train Loss: 0.6657, Train Accuracy: 85.88%
+Epoch 4/15, Train Loss: 0.6611, Train Accuracy: 89.87%
+Epoch 5/15, Train Loss: 0.6558, Train Accuracy: 91.30%
+Epoch 6/15, Train Loss: 0.6516, Train Accuracy: 92.73%
+Epoch 7/15, Train Loss: 0.6468, Train Accuracy: 92.94%
+Epoch 8/15, Train Loss: 0.6415, Train Accuracy: 93.36%
+Epoch 9/15, Train Loss: 0.6354, Train Accuracy: 93.57%
+Epoch 10/15, Train Loss: 0.6298, Train Accuracy: 94.07%
+Epoch 11/15, Train Loss: 0.6232, Train Accuracy: 93.99%
+Epoch 12/15, Train Loss: 0.6165, Train Accuracy: 94.24%
+Epoch 13/15, Train Loss: 0.6090, Train Accuracy: 94.20%
+Epoch 14/15, Train Loss: 0.6006, Train Accuracy: 94.49%
+Epoch 15/15, Train Loss: 0.5914, Train Accuracy: 94.45%
+Saved model: resnet50_3layers_64_128_256_dropout0.25_fold1.pth
+Training config 24/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [64, 256, 64], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/15, Train Loss: 0.7235, Train Accuracy: 15.85%
+Epoch 2/15, Train Loss: 0.7125, Train Accuracy: 25.01%
+Epoch 3/15, Train Loss: 0.7035, Train Accuracy: 35.77%
+Epoch 4/15, Train Loss: 0.6945, Train Accuracy: 47.33%
+Epoch 5/15, Train Loss: 0.6849, Train Accuracy: 59.44%
+Epoch 6/15, Train Loss: 0.6775, Train Accuracy: 67.47%
+Epoch 7/15, Train Loss: 0.6679, Train Accuracy: 76.42%
+Epoch 8/15, Train Loss: 0.6592, Train Accuracy: 83.10%
+Epoch 9/15, Train Loss: 0.6513, Train Accuracy: 86.97%
+Epoch 10/15, Train Loss: 0.6419, Train Accuracy: 88.61%
+Epoch 11/15, Train Loss: 0.6335, Train Accuracy: 91.09%
+Epoch 12/15, Train Loss: 0.6231, Train Accuracy: 91.59%
+Epoch 13/15, Train Loss: 0.6129, Train Accuracy: 93.44%
+Epoch 14/15, Train Loss: 0.6043, Train Accuracy: 93.57%
+Epoch 15/15, Train Loss: 0.5940, Train Accuracy: 94.03%
+Saved model: resnet50_3layers_64_256_64_dropout0.25_fold1.pth
+Training config 25/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [64, 256, 128], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7289, Train Accuracy: 9.04%
+Epoch 2/8, Train Loss: 0.7228, Train Accuracy: 11.90%
+Epoch 3/8, Train Loss: 0.7145, Train Accuracy: 19.25%
+Epoch 4/8, Train Loss: 0.7078, Train Accuracy: 27.15%
+Epoch 5/8, Train Loss: 0.7016, Train Accuracy: 36.91%
+Epoch 6/8, Train Loss: 0.6944, Train Accuracy: 47.37%
+Epoch 7/8, Train Loss: 0.6871, Train Accuracy: 57.21%
+Epoch 8/8, Train Loss: 0.6807, Train Accuracy: 68.18%
+Saved model: resnet50_3layers_64_256_128_dropout0.25_fold1.pth
+Training config 26/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [64, 256, 256], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7000, Train Accuracy: 38.25%
+Epoch 2/8, Train Loss: 0.6922, Train Accuracy: 49.68%
+Epoch 3/8, Train Loss: 0.6833, Train Accuracy: 63.89%
+Epoch 4/8, Train Loss: 0.6755, Train Accuracy: 73.35%
+Epoch 5/8, Train Loss: 0.6666, Train Accuracy: 81.17%
+Epoch 6/8, Train Loss: 0.6569, Train Accuracy: 86.63%
+Epoch 7/8, Train Loss: 0.6481, Train Accuracy: 90.04%
+Epoch 8/8, Train Loss: 0.6383, Train Accuracy: 91.72%
+Saved model: resnet50_3layers_64_256_256_dropout0.25_fold1.pth
+Training config 27/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [128, 64, 64], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7376, Train Accuracy: 8.20%
+Epoch 2/8, Train Loss: 0.7302, Train Accuracy: 11.64%
+Epoch 3/8, Train Loss: 0.7223, Train Accuracy: 17.44%
+Epoch 4/8, Train Loss: 0.7143, Train Accuracy: 23.96%
+Epoch 5/8, Train Loss: 0.7051, Train Accuracy: 36.44%
+Epoch 6/8, Train Loss: 0.6965, Train Accuracy: 46.53%
+Epoch 7/8, Train Loss: 0.6856, Train Accuracy: 58.09%
+Epoch 8/8, Train Loss: 0.6744, Train Accuracy: 66.67%
+Saved model: resnet50_3layers_128_64_64_dropout0.25_fold1.pth
+Training config 28/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [128, 64, 128], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6337, Train Accuracy: 94.07%
+Epoch 2/8, Train Loss: 0.6246, Train Accuracy: 94.20%
+Epoch 3/8, Train Loss: 0.6138, Train Accuracy: 94.45%
+Epoch 4/8, Train Loss: 0.6036, Train Accuracy: 94.49%
+Epoch 5/8, Train Loss: 0.5919, Train Accuracy: 94.45%
+Epoch 6/8, Train Loss: 0.5814, Train Accuracy: 94.49%
+Epoch 7/8, Train Loss: 0.5698, Train Accuracy: 94.49%
+Epoch 8/8, Train Loss: 0.5575, Train Accuracy: 94.49%
+Saved model: resnet50_3layers_128_64_128_dropout0.25_fold1.pth
+Training config 29/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [128, 64, 256], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6853, Train Accuracy: 62.21%
+Epoch 2/8, Train Loss: 0.6771, Train Accuracy: 72.89%
+Epoch 3/8, Train Loss: 0.6696, Train Accuracy: 81.13%
+Epoch 4/8, Train Loss: 0.6620, Train Accuracy: 85.41%
+Epoch 5/8, Train Loss: 0.6535, Train Accuracy: 90.25%
+Epoch 6/8, Train Loss: 0.6447, Train Accuracy: 92.22%
+Epoch 7/8, Train Loss: 0.6364, Train Accuracy: 92.85%
+Epoch 8/8, Train Loss: 0.6266, Train Accuracy: 93.44%
+Saved model: resnet50_3layers_128_64_256_dropout0.25_fold1.pth
+Training config 30/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [128, 128, 64], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6135, Train Accuracy: 94.49%
+Epoch 2/8, Train Loss: 0.6069, Train Accuracy: 94.49%
+Epoch 3/8, Train Loss: 0.6005, Train Accuracy: 94.49%
+Epoch 4/8, Train Loss: 0.5942, Train Accuracy: 94.49%
+Epoch 5/8, Train Loss: 0.5866, Train Accuracy: 94.49%
+Epoch 6/8, Train Loss: 0.5805, Train Accuracy: 94.49%
+Epoch 7/8, Train Loss: 0.5704, Train Accuracy: 94.49%
+Epoch 8/8, Train Loss: 0.5624, Train Accuracy: 94.49%
+Saved model: resnet50_3layers_128_128_64_dropout0.25_fold1.pth
+Training config 31/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [128, 128, 256], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7296, Train Accuracy: 9.08%
+Epoch 2/8, Train Loss: 0.7220, Train Accuracy: 12.95%
+Epoch 3/8, Train Loss: 0.7142, Train Accuracy: 18.62%
+Epoch 4/8, Train Loss: 0.7068, Train Accuracy: 28.08%
+Epoch 5/8, Train Loss: 0.6982, Train Accuracy: 41.45%
+Epoch 6/8, Train Loss: 0.6889, Train Accuracy: 55.40%
+Epoch 7/8, Train Loss: 0.6792, Train Accuracy: 69.27%
+Epoch 8/8, Train Loss: 0.6708, Train Accuracy: 77.60%
+Saved model: resnet50_3layers_128_128_256_dropout0.25_fold1.pth
+Training config 32/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [128, 256, 64], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7028, Train Accuracy: 35.06%
+Epoch 2/8, Train Loss: 0.6943, Train Accuracy: 47.71%
+Epoch 3/8, Train Loss: 0.6865, Train Accuracy: 59.98%
+Epoch 4/8, Train Loss: 0.6772, Train Accuracy: 71.96%
+Epoch 5/8, Train Loss: 0.6678, Train Accuracy: 81.67%
+Epoch 6/8, Train Loss: 0.6592, Train Accuracy: 86.72%
+Epoch 7/8, Train Loss: 0.6492, Train Accuracy: 89.83%
+Epoch 8/8, Train Loss: 0.6403, Train Accuracy: 92.18%
+Saved model: resnet50_3layers_128_256_64_dropout0.25_fold1.pth
+Training config 33/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [128, 256, 128], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6570, Train Accuracy: 90.37%
+Epoch 2/8, Train Loss: 0.6457, Train Accuracy: 93.19%
+Epoch 3/8, Train Loss: 0.6349, Train Accuracy: 94.16%
+Epoch 4/8, Train Loss: 0.6231, Train Accuracy: 94.49%
+Epoch 5/8, Train Loss: 0.6113, Train Accuracy: 94.49%
+Epoch 6/8, Train Loss: 0.5996, Train Accuracy: 94.49%
+Epoch 7/8, Train Loss: 0.5863, Train Accuracy: 94.45%
+Epoch 8/8, Train Loss: 0.5720, Train Accuracy: 94.49%
+Saved model: resnet50_3layers_128_256_128_dropout0.25_fold1.pth
+Training config 34/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [128, 256, 256], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6584, Train Accuracy: 91.93%
+Epoch 2/8, Train Loss: 0.6493, Train Accuracy: 93.74%
+Epoch 3/8, Train Loss: 0.6410, Train Accuracy: 94.24%
+Epoch 4/8, Train Loss: 0.6314, Train Accuracy: 94.49%
+Epoch 5/8, Train Loss: 0.6217, Train Accuracy: 94.49%
+Epoch 6/8, Train Loss: 0.6110, Train Accuracy: 94.49%
+Epoch 7/8, Train Loss: 0.5993, Train Accuracy: 94.49%
+Epoch 8/8, Train Loss: 0.5874, Train Accuracy: 94.49%
+Saved model: resnet50_3layers_128_256_256_dropout0.25_fold1.pth
+Training config 35/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [256, 64, 64], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6680, Train Accuracy: 89.70%
+Epoch 2/8, Train Loss: 0.6617, Train Accuracy: 91.80%
+Epoch 3/8, Train Loss: 0.6550, Train Accuracy: 93.11%
+Epoch 4/8, Train Loss: 0.6486, Train Accuracy: 94.07%
+Epoch 5/8, Train Loss: 0.6417, Train Accuracy: 94.16%
+Epoch 6/8, Train Loss: 0.6354, Train Accuracy: 94.33%
+Epoch 7/8, Train Loss: 0.6282, Train Accuracy: 94.45%
+Epoch 8/8, Train Loss: 0.6209, Train Accuracy: 94.45%
+Saved model: resnet50_3layers_256_64_64_dropout0.25_fold1.pth
+Training config 36/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [256, 64, 128], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7145, Train Accuracy: 16.94%
+Epoch 2/8, Train Loss: 0.7062, Train Accuracy: 26.65%
+Epoch 3/8, Train Loss: 0.6971, Train Accuracy: 42.54%
+Epoch 4/8, Train Loss: 0.6891, Train Accuracy: 56.07%
+Epoch 5/8, Train Loss: 0.6798, Train Accuracy: 69.36%
+Epoch 6/8, Train Loss: 0.6706, Train Accuracy: 78.69%
+Epoch 7/8, Train Loss: 0.6617, Train Accuracy: 85.16%
+Epoch 8/8, Train Loss: 0.6514, Train Accuracy: 88.52%
+Saved model: resnet50_3layers_256_64_128_dropout0.25_fold1.pth
+Training config 37/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [256, 64, 256], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6677, Train Accuracy: 82.01%
+Epoch 2/8, Train Loss: 0.6535, Train Accuracy: 89.53%
+Epoch 3/8, Train Loss: 0.6394, Train Accuracy: 93.44%
+Epoch 4/8, Train Loss: 0.6269, Train Accuracy: 93.78%
+Epoch 5/8, Train Loss: 0.6137, Train Accuracy: 94.33%
+Epoch 6/8, Train Loss: 0.5999, Train Accuracy: 94.41%
+Epoch 7/8, Train Loss: 0.5862, Train Accuracy: 94.54%
+Epoch 8/8, Train Loss: 0.5738, Train Accuracy: 94.49%
+Saved model: resnet50_3layers_256_64_256_dropout0.25_fold1.pth
+Training config 38/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [256, 128, 64], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7095, Train Accuracy: 26.73%
+Epoch 2/8, Train Loss: 0.6978, Train Accuracy: 42.79%
+Epoch 3/8, Train Loss: 0.6889, Train Accuracy: 57.63%
+Epoch 4/8, Train Loss: 0.6790, Train Accuracy: 72.09%
+Epoch 5/8, Train Loss: 0.6710, Train Accuracy: 80.87%
+Epoch 6/8, Train Loss: 0.6643, Train Accuracy: 86.68%
+Epoch 7/8, Train Loss: 0.6558, Train Accuracy: 89.79%
+Epoch 8/8, Train Loss: 0.6492, Train Accuracy: 92.43%
+Saved model: resnet50_3layers_256_128_64_dropout0.25_fold1.pth
+Training config 39/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [256, 128, 128], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6517, Train Accuracy: 93.40%
+Epoch 2/8, Train Loss: 0.6405, Train Accuracy: 94.16%
+Epoch 3/8, Train Loss: 0.6306, Train Accuracy: 94.49%
+Epoch 4/8, Train Loss: 0.6205, Train Accuracy: 94.45%
+Epoch 5/8, Train Loss: 0.6110, Train Accuracy: 94.49%
+Epoch 6/8, Train Loss: 0.6009, Train Accuracy: 94.49%
+Epoch 7/8, Train Loss: 0.5912, Train Accuracy: 94.49%
+Epoch 8/8, Train Loss: 0.5801, Train Accuracy: 94.49%
+Saved model: resnet50_3layers_256_128_128_dropout0.25_fold1.pth
+Training config 40/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [256, 128, 256], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6879, Train Accuracy: 58.43%
+Epoch 2/8, Train Loss: 0.6737, Train Accuracy: 77.89%
+Epoch 3/8, Train Loss: 0.6593, Train Accuracy: 89.41%
+Epoch 4/8, Train Loss: 0.6448, Train Accuracy: 92.52%
+Epoch 5/8, Train Loss: 0.6318, Train Accuracy: 94.07%
+Epoch 6/8, Train Loss: 0.6173, Train Accuracy: 94.49%
+Epoch 7/8, Train Loss: 0.6031, Train Accuracy: 94.37%
+Epoch 8/8, Train Loss: 0.5883, Train Accuracy: 94.49%
+Saved model: resnet50_3layers_256_128_256_dropout0.25_fold1.pth
+Training config 41/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [256, 256, 64], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6975, Train Accuracy: 39.89%
+Epoch 2/8, Train Loss: 0.6871, Train Accuracy: 61.71%
+Epoch 3/8, Train Loss: 0.6743, Train Accuracy: 78.60%
+Epoch 4/8, Train Loss: 0.6615, Train Accuracy: 87.68%
+Epoch 5/8, Train Loss: 0.6471, Train Accuracy: 92.18%
+Epoch 6/8, Train Loss: 0.6321, Train Accuracy: 93.57%
+Epoch 7/8, Train Loss: 0.6165, Train Accuracy: 94.24%
+Epoch 8/8, Train Loss: 0.5980, Train Accuracy: 94.45%
+Saved model: resnet50_3layers_256_256_64_dropout0.25_fold1.pth
+Training config 42/66 in fold 1
+Configuration details: {'model_name': 'resnet50', 'num_layers': 3, 'units_per_layer': [256, 256, 128], 'dropout': 0.25}
+CUDA est  disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6806, Train Accuracy: 72.01%
+Epoch 2/8, Train Loss: 0.6695, Train Accuracy: 84.20%
+Epoch 3/8, Train Loss: 0.6570, Train Accuracy: 91.17%
+Epoch 4/8, Train Loss: 0.6453, Train Accuracy: 93.82%
+Epoch 5/8, Train Loss: 0.6336, Train Accuracy: 94.03%
+Epoch 6/8, Train Loss: 0.6226, Train Accuracy: 94.41%
+Epoch 7/8, Train Loss: 0.6077, Train Accuracy: 94.41%
+Epoch 8/8, Train Loss: 0.5931, Train Accuracy: 94.49%
+Saved model: resnet50_3layers_256_256_128_dropout0.25_fold1.pth
+Training config 43/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [64, 64, 128], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6439, Train Accuracy: 93.65%
+Epoch 2/8, Train Loss: 0.6412, Train Accuracy: 94.12%
+Epoch 3/8, Train Loss: 0.6379, Train Accuracy: 93.95%
+Epoch 4/8, Train Loss: 0.6331, Train Accuracy: 94.28%
+Epoch 5/8, Train Loss: 0.6298, Train Accuracy: 94.33%
+Epoch 6/8, Train Loss: 0.6257, Train Accuracy: 94.45%
+Epoch 7/8, Train Loss: 0.6210, Train Accuracy: 94.37%
+Epoch 8/8, Train Loss: 0.6166, Train Accuracy: 94.37%
+Saved model: densenet201_3layers_64_64_128_dropout0.25_fold1.pth
+Training config 44/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [64, 64, 256], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6198, Train Accuracy: 94.33%
+Epoch 2/8, Train Loss: 0.6139, Train Accuracy: 94.49%
+Epoch 3/8, Train Loss: 0.6079, Train Accuracy: 94.54%
+Epoch 4/8, Train Loss: 0.6000, Train Accuracy: 94.45%
+Epoch 5/8, Train Loss: 0.5947, Train Accuracy: 94.49%
+Epoch 6/8, Train Loss: 0.5866, Train Accuracy: 94.45%
+Epoch 7/8, Train Loss: 0.5803, Train Accuracy: 94.45%
+Epoch 8/8, Train Loss: 0.5740, Train Accuracy: 94.49%
+Saved model: densenet201_3layers_64_64_256_dropout0.25_fold1.pth
+Training config 45/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [64, 128, 64], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7098, Train Accuracy: 23.62%
+Epoch 2/8, Train Loss: 0.7060, Train Accuracy: 29.89%
+Epoch 3/8, Train Loss: 0.7029, Train Accuracy: 34.26%
+Epoch 4/8, Train Loss: 0.6996, Train Accuracy: 40.35%
+Epoch 5/8, Train Loss: 0.6968, Train Accuracy: 44.35%
+Epoch 6/8, Train Loss: 0.6940, Train Accuracy: 48.17%
+Epoch 7/8, Train Loss: 0.6910, Train Accuracy: 53.30%
+Epoch 8/8, Train Loss: 0.6861, Train Accuracy: 58.18%
+Saved model: densenet201_3layers_64_128_64_dropout0.25_fold1.pth
+Training config 46/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [64, 128, 128], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7110, Train Accuracy: 27.41%
+Epoch 2/8, Train Loss: 0.7057, Train Accuracy: 34.22%
+Epoch 3/8, Train Loss: 0.7005, Train Accuracy: 40.90%
+Epoch 4/8, Train Loss: 0.6958, Train Accuracy: 46.41%
+Epoch 5/8, Train Loss: 0.6906, Train Accuracy: 50.99%
+Epoch 6/8, Train Loss: 0.6858, Train Accuracy: 58.64%
+Epoch 7/8, Train Loss: 0.6812, Train Accuracy: 63.47%
+Epoch 8/8, Train Loss: 0.6753, Train Accuracy: 70.24%
+Saved model: densenet201_3layers_64_128_128_dropout0.25_fold1.pth
+Training config 47/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [64, 128, 256], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6892, Train Accuracy: 58.05%
+Epoch 2/8, Train Loss: 0.6847, Train Accuracy: 64.78%
+Epoch 3/8, Train Loss: 0.6824, Train Accuracy: 68.60%
+Epoch 4/8, Train Loss: 0.6779, Train Accuracy: 73.35%
+Epoch 5/8, Train Loss: 0.6737, Train Accuracy: 80.03%
+Epoch 6/8, Train Loss: 0.6715, Train Accuracy: 80.96%
+Epoch 7/8, Train Loss: 0.6677, Train Accuracy: 84.07%
+Epoch 8/8, Train Loss: 0.6635, Train Accuracy: 86.59%
+Saved model: densenet201_3layers_64_128_256_dropout0.25_fold1.pth
+Training config 48/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [64, 256, 64], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7010, Train Accuracy: 37.07%
+Epoch 2/8, Train Loss: 0.6974, Train Accuracy: 43.21%
+Epoch 3/8, Train Loss: 0.6924, Train Accuracy: 50.61%
+Epoch 4/8, Train Loss: 0.6890, Train Accuracy: 55.44%
+Epoch 5/8, Train Loss: 0.6832, Train Accuracy: 64.31%
+Epoch 6/8, Train Loss: 0.6782, Train Accuracy: 70.20%
+Epoch 7/8, Train Loss: 0.6741, Train Accuracy: 75.28%
+Epoch 8/8, Train Loss: 0.6691, Train Accuracy: 80.33%
+Saved model: densenet201_3layers_64_256_64_dropout0.25_fold1.pth
+Training config 49/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [64, 256, 128], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7017, Train Accuracy: 36.70%
+Epoch 2/8, Train Loss: 0.6981, Train Accuracy: 43.59%
+Epoch 3/8, Train Loss: 0.6938, Train Accuracy: 50.02%
+Epoch 4/8, Train Loss: 0.6900, Train Accuracy: 55.53%
+Epoch 5/8, Train Loss: 0.6859, Train Accuracy: 61.50%
+Epoch 6/8, Train Loss: 0.6818, Train Accuracy: 68.81%
+Epoch 7/8, Train Loss: 0.6780, Train Accuracy: 74.57%
+Epoch 8/8, Train Loss: 0.6741, Train Accuracy: 78.10%
+Saved model: densenet201_3layers_64_256_128_dropout0.25_fold1.pth
+Training config 50/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [64, 256, 256], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6834, Train Accuracy: 69.65%
+Epoch 2/8, Train Loss: 0.6793, Train Accuracy: 74.82%
+Epoch 3/8, Train Loss: 0.6752, Train Accuracy: 79.99%
+Epoch 4/8, Train Loss: 0.6711, Train Accuracy: 83.52%
+Epoch 5/8, Train Loss: 0.6668, Train Accuracy: 87.98%
+Epoch 6/8, Train Loss: 0.6625, Train Accuracy: 90.04%
+Epoch 7/8, Train Loss: 0.6583, Train Accuracy: 91.59%
+Epoch 8/8, Train Loss: 0.6531, Train Accuracy: 92.69%
+Saved model: densenet201_3layers_64_256_256_dropout0.25_fold1.pth
+Training config 51/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [128, 64, 64], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6626, Train Accuracy: 84.95%
+Epoch 2/8, Train Loss: 0.6577, Train Accuracy: 87.85%
+Epoch 3/8, Train Loss: 0.6536, Train Accuracy: 88.86%
+Epoch 4/8, Train Loss: 0.6460, Train Accuracy: 91.89%
+Epoch 5/8, Train Loss: 0.6402, Train Accuracy: 92.35%
+Epoch 6/8, Train Loss: 0.6361, Train Accuracy: 92.52%
+Epoch 7/8, Train Loss: 0.6292, Train Accuracy: 93.36%
+Epoch 8/8, Train Loss: 0.6219, Train Accuracy: 94.07%
+Saved model: densenet201_3layers_128_64_64_dropout0.25_fold1.pth
+Training config 52/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [128, 64, 128], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7366, Train Accuracy: 8.62%
+Epoch 2/8, Train Loss: 0.7308, Train Accuracy: 11.06%
+Epoch 3/8, Train Loss: 0.7242, Train Accuracy: 13.79%
+Epoch 4/8, Train Loss: 0.7188, Train Accuracy: 18.71%
+Epoch 5/8, Train Loss: 0.7127, Train Accuracy: 24.93%
+Epoch 6/8, Train Loss: 0.7058, Train Accuracy: 32.87%
+Epoch 7/8, Train Loss: 0.7000, Train Accuracy: 40.23%
+Epoch 8/8, Train Loss: 0.6933, Train Accuracy: 49.68%
+Saved model: densenet201_3layers_128_64_128_dropout0.25_fold1.pth
+Training config 53/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [128, 64, 256], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7116, Train Accuracy: 26.36%
+Epoch 2/8, Train Loss: 0.7048, Train Accuracy: 34.93%
+Epoch 3/8, Train Loss: 0.6989, Train Accuracy: 41.49%
+Epoch 4/8, Train Loss: 0.6904, Train Accuracy: 53.01%
+Epoch 5/8, Train Loss: 0.6832, Train Accuracy: 61.92%
+Epoch 6/8, Train Loss: 0.6758, Train Accuracy: 69.57%
+Epoch 7/8, Train Loss: 0.6673, Train Accuracy: 75.49%
+Epoch 8/8, Train Loss: 0.6588, Train Accuracy: 82.77%
+Saved model: densenet201_3layers_128_64_256_dropout0.25_fold1.pth
+Training config 54/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [128, 128, 64], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6094, Train Accuracy: 94.49%
+Epoch 2/8, Train Loss: 0.6054, Train Accuracy: 94.49%
+Epoch 3/8, Train Loss: 0.6013, Train Accuracy: 94.49%
+Epoch 4/8, Train Loss: 0.5972, Train Accuracy: 94.49%
+Epoch 5/8, Train Loss: 0.5929, Train Accuracy: 94.49%
+Epoch 6/8, Train Loss: 0.5881, Train Accuracy: 94.49%
+Epoch 7/8, Train Loss: 0.5838, Train Accuracy: 94.49%
+Epoch 8/8, Train Loss: 0.5784, Train Accuracy: 94.49%
+Saved model: densenet201_3layers_128_128_64_dropout0.25_fold1.pth
+Training config 55/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [128, 128, 256], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6541, Train Accuracy: 88.02%
+Epoch 2/8, Train Loss: 0.6464, Train Accuracy: 91.30%
+Epoch 3/8, Train Loss: 0.6407, Train Accuracy: 92.56%
+Epoch 4/8, Train Loss: 0.6335, Train Accuracy: 93.44%
+Epoch 5/8, Train Loss: 0.6264, Train Accuracy: 94.07%
+Epoch 6/8, Train Loss: 0.6186, Train Accuracy: 94.28%
+Epoch 7/8, Train Loss: 0.6117, Train Accuracy: 94.37%
+Epoch 8/8, Train Loss: 0.6029, Train Accuracy: 94.45%
+Saved model: densenet201_3layers_128_128_256_dropout0.25_fold1.pth
+Training config 56/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [128, 256, 64], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6458, Train Accuracy: 94.28%
+Epoch 2/8, Train Loss: 0.6403, Train Accuracy: 94.45%
+Epoch 3/8, Train Loss: 0.6361, Train Accuracy: 94.49%
+Epoch 4/8, Train Loss: 0.6322, Train Accuracy: 94.49%
+Epoch 5/8, Train Loss: 0.6270, Train Accuracy: 94.49%
+Epoch 6/8, Train Loss: 0.6224, Train Accuracy: 94.49%
+Epoch 7/8, Train Loss: 0.6174, Train Accuracy: 94.49%
+Epoch 8/8, Train Loss: 0.6120, Train Accuracy: 94.49%
+Saved model: densenet201_3layers_128_256_64_dropout0.25_fold1.pth
+Training config 57/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [128, 256, 128], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6992, Train Accuracy: 40.18%
+Epoch 2/8, Train Loss: 0.6935, Train Accuracy: 49.26%
+Epoch 3/8, Train Loss: 0.6876, Train Accuracy: 61.20%
+Epoch 4/8, Train Loss: 0.6831, Train Accuracy: 68.60%
+Epoch 5/8, Train Loss: 0.6771, Train Accuracy: 76.38%
+Epoch 6/8, Train Loss: 0.6717, Train Accuracy: 82.98%
+Epoch 7/8, Train Loss: 0.6658, Train Accuracy: 87.14%
+Epoch 8/8, Train Loss: 0.6618, Train Accuracy: 88.52%
+Saved model: densenet201_3layers_128_256_128_dropout0.25_fold1.pth
+Training config 58/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [128, 256, 256], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6580, Train Accuracy: 91.68%
+Epoch 2/8, Train Loss: 0.6524, Train Accuracy: 93.02%
+Epoch 3/8, Train Loss: 0.6469, Train Accuracy: 93.78%
+Epoch 4/8, Train Loss: 0.6424, Train Accuracy: 94.20%
+Epoch 5/8, Train Loss: 0.6369, Train Accuracy: 94.41%
+Epoch 6/8, Train Loss: 0.6317, Train Accuracy: 94.45%
+Epoch 7/8, Train Loss: 0.6258, Train Accuracy: 94.45%
+Epoch 8/8, Train Loss: 0.6197, Train Accuracy: 94.49%
+Saved model: densenet201_3layers_128_256_256_dropout0.25_fold1.pth
+Training config 59/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [256, 64, 64], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6988, Train Accuracy: 36.82%
+Epoch 2/8, Train Loss: 0.6956, Train Accuracy: 44.39%
+Epoch 3/8, Train Loss: 0.6912, Train Accuracy: 54.01%
+Epoch 4/8, Train Loss: 0.6868, Train Accuracy: 62.34%
+Epoch 5/8, Train Loss: 0.6827, Train Accuracy: 69.15%
+Epoch 6/8, Train Loss: 0.6780, Train Accuracy: 76.12%
+Epoch 7/8, Train Loss: 0.6733, Train Accuracy: 80.12%
+Epoch 8/8, Train Loss: 0.6672, Train Accuracy: 83.77%
+Saved model: densenet201_3layers_256_64_64_dropout0.25_fold1.pth
+Training config 60/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [256, 64, 128], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6400, Train Accuracy: 93.57%
+Epoch 2/8, Train Loss: 0.6335, Train Accuracy: 94.12%
+Epoch 3/8, Train Loss: 0.6263, Train Accuracy: 94.33%
+Epoch 4/8, Train Loss: 0.6189, Train Accuracy: 94.41%
+Epoch 5/8, Train Loss: 0.6131, Train Accuracy: 94.41%
+Epoch 6/8, Train Loss: 0.6060, Train Accuracy: 94.45%
+Epoch 7/8, Train Loss: 0.6002, Train Accuracy: 94.49%
+Epoch 8/8, Train Loss: 0.5933, Train Accuracy: 94.49%
+Saved model: densenet201_3layers_256_64_128_dropout0.25_fold1.pth
+Training config 61/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [256, 64, 256], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7278, Train Accuracy: 11.35%
+Epoch 2/8, Train Loss: 0.7198, Train Accuracy: 15.93%
+Epoch 3/8, Train Loss: 0.7121, Train Accuracy: 23.67%
+Epoch 4/8, Train Loss: 0.7041, Train Accuracy: 34.55%
+Epoch 5/8, Train Loss: 0.6962, Train Accuracy: 45.52%
+Epoch 6/8, Train Loss: 0.6868, Train Accuracy: 57.59%
+Epoch 7/8, Train Loss: 0.6784, Train Accuracy: 68.26%
+Epoch 8/8, Train Loss: 0.6694, Train Accuracy: 76.42%
+Saved model: densenet201_3layers_256_64_256_dropout0.25_fold1.pth
+Training config 62/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [256, 128, 64], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7022, Train Accuracy: 35.69%
+Epoch 2/8, Train Loss: 0.6966, Train Accuracy: 43.97%
+Epoch 3/8, Train Loss: 0.6909, Train Accuracy: 56.28%
+Epoch 4/8, Train Loss: 0.6848, Train Accuracy: 67.72%
+Epoch 5/8, Train Loss: 0.6788, Train Accuracy: 76.38%
+Epoch 6/8, Train Loss: 0.6734, Train Accuracy: 83.35%
+Epoch 7/8, Train Loss: 0.6682, Train Accuracy: 86.97%
+Epoch 8/8, Train Loss: 0.6624, Train Accuracy: 89.91%
+Saved model: densenet201_3layers_256_128_64_dropout0.25_fold1.pth
+Training config 63/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [256, 128, 128], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.7243, Train Accuracy: 14.25%
+Epoch 2/8, Train Loss: 0.7162, Train Accuracy: 20.26%
+Epoch 3/8, Train Loss: 0.7087, Train Accuracy: 29.09%
+Epoch 4/8, Train Loss: 0.6999, Train Accuracy: 40.23%
+Epoch 5/8, Train Loss: 0.6916, Train Accuracy: 52.29%
+Epoch 6/8, Train Loss: 0.6826, Train Accuracy: 62.55%
+Epoch 7/8, Train Loss: 0.6729, Train Accuracy: 72.51%
+Epoch 8/8, Train Loss: 0.6652, Train Accuracy: 78.48%
+Saved model: densenet201_3layers_256_128_128_dropout0.25_fold1.pth
+Training config 64/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [256, 128, 256], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6648, Train Accuracy: 92.48%
+Epoch 2/8, Train Loss: 0.6591, Train Accuracy: 93.48%
+Epoch 3/8, Train Loss: 0.6535, Train Accuracy: 94.07%
+Epoch 4/8, Train Loss: 0.6469, Train Accuracy: 94.24%
+Epoch 5/8, Train Loss: 0.6403, Train Accuracy: 94.41%
+Epoch 6/8, Train Loss: 0.6330, Train Accuracy: 94.37%
+Epoch 7/8, Train Loss: 0.6256, Train Accuracy: 94.49%
+Epoch 8/8, Train Loss: 0.6172, Train Accuracy: 94.49%
+Saved model: densenet201_3layers_256_128_256_dropout0.25_fold1.pth
+Training config 65/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [256, 256, 64], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6596, Train Accuracy: 91.64%
+Epoch 2/8, Train Loss: 0.6536, Train Accuracy: 92.52%
+Epoch 3/8, Train Loss: 0.6467, Train Accuracy: 93.69%
+Epoch 4/8, Train Loss: 0.6383, Train Accuracy: 94.24%
+Epoch 5/8, Train Loss: 0.6311, Train Accuracy: 94.37%
+Epoch 6/8, Train Loss: 0.6226, Train Accuracy: 94.49%
+Epoch 7/8, Train Loss: 0.6148, Train Accuracy: 94.54%
+Epoch 8/8, Train Loss: 0.6045, Train Accuracy: 94.49%
+Saved model: densenet201_3layers_256_256_64_dropout0.25_fold1.pth
+Training config 66/66 in fold 1
+Configuration details: {'model_name': 'densenet201', 'num_layers': 3, 'units_per_layer': [256, 256, 128], 'dropout': 0.25}
+CUDA est� disponible. Usando GPU: NVIDIA GeForce RTX 2060
+Epoch 1/8, Train Loss: 0.6988, Train Accuracy: 40.73%
+Epoch 2/8, Train Loss: 0.6919, Train Accuracy: 52.96%
+Epoch 3/8, Train Loss: 0.6859, Train Accuracy: 64.27%
+Epoch 4/8, Train Loss: 0.6801, Train Accuracy: 72.68%
+Epoch 5/8, Train Loss: 0.6737, Train Accuracy: 80.54%
+Epoch 6/8, Train Loss: 0.6673, Train Accuracy: 86.04%
+Epoch 7/8, Train Loss: 0.6608, Train Accuracy: 89.62%
+Epoch 8/8, Train Loss: 0.6544, Train Accuracy: 92.31%
+Saved model: densenet201_3layers_256_256_128_dropout0.25_fold1.pth

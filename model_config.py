@@ -22,6 +22,7 @@
             all_configurations.append(configuration)"""
 
 all_configurations = [
+    #1 layer: resnet50
     {
         "model_name": "resnet50",
         "num_layers": 1,
@@ -29,27 +30,76 @@ all_configurations = [
         "dropout": 0.25
     },
     {
+        "model_name": "resnet50",
+        "num_layers": 1,
+        "units_per_layer": [256],
+        "dropout": 0.25
+    },
+    #1 layer: densenet201
+    {
         "model_name": "densenet201",
+        "num_layers": 1,
+        "units_per_layer": [128],
+        "dropout": 0.25
+    },
+    {
+        "model_name": "densenet201",
+        "num_layers": 1,
+        "units_per_layer": [256],
+        "dropout": 0.25
+    },
+    #2 layers: resnet50
+    {
+        "model_name": "resnet50",
         "num_layers": 2,
-        "units_per_layer": [64, 256],
+        "units_per_layer": [128, 256],
         "dropout": 0.25
     },
     {
         "model_name": "resnet50",
         "num_layers": 2,
-        "units_per_layer": [128, 128],
+        "units_per_layer": [64, 128],
+        "dropout": 0.25
+    },
+    #2 layers: densenet201
+    {
+        "model_name": "densenet201",
+        "num_layers": 2,
+        "units_per_layer": [128, 256],
         "dropout": 0.25
     },
     {
         "model_name": "densenet201",
+        "num_layers": 2,
+        "units_per_layer": [64, 128],
+        "dropout": 0.25
+    },]
+"""
+    #3 layers: resnet50
+    {
+        "model_name": "resnet50",
         "num_layers": 3,
-        "units_per_layer": [64, 128, 256],
+        "units_per_layer": [64, 256, 64],
         "dropout": 0.25
     },
     {
         "model_name": "resnet50",
         "num_layers": 3,
-        "units_per_layer": [256, 128, 64],
+        "units_per_layer": [128, 64, 256],
+        "dropout": 0.25
+    },
+    #3 layers: densenet201
+    {
+        "model_name": "densenet201",
+        "num_layers": 3,
+        "units_per_layer": [64, 256, 64],
+        "dropout": 0.25
+    },
+    {
+        "model_name": "densenet201",
+        "num_layers": 3,
+        "units_per_layer": [128, 64, 256],
         "dropout": 0.25
     }
 ]
+"""

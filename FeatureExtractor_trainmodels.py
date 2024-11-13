@@ -14,26 +14,25 @@ from sklearn.model_selection import StratifiedKFold
 from itertools import product
 from model_config import all_configurations
 import warnings
+import sys
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore")
 
-import sys
-
 class Tee:
-    def _init_(self, *fileobjs):
+    def __init__(self, *fileobjs):
         self.fileobjs = fileobjs
 
     def write(self, message):
         for fileobj in self.fileobjs:
             fileobj.write(message)
-            fileobj.flush()  # Asegúrate de que el mensaje se escribe inmediatamente
+            fileobj.flush()  
 
     def flush(self):
         for fileobj in self.fileobjs:
             fileobj.flush()
 
-#log_file = open(r'Git\Histopathological_Diagnosis\training_log.txt', 'w')  # Abre el archivo en modo escritura
-#sys.stdout = Tee(sys.stdout, log_file)  # Redirige las impresiones a este archivo
+log_file = open(r'Git\Histopathological_Diagnosis\best_models_training.txt', 'w')  
+sys.stdout = Tee(sys.stdout, log_file)  
 
 def LoadAnnotated(df, data_dir):
     # Initialize an empty list to store images
@@ -115,7 +114,7 @@ class StandardImageDataset(Dataset):
         label = 0 if label == -1 else label  # Convert -1 (if present) to 0 (negative class). as we are using crossentropyloss
         return image, label
 
-def weights(annotated_file):
+"""def weights(annotated_file):
     df = annotated_file
     
     # Initialize an empty list to store images
@@ -132,23 +131,60 @@ def weights(annotated_file):
             positives+=1
         c_general+=1
 
-    return positives/c_general, negatives/c_general
+    return positives/c_general, negatives/c_general"""
 
-def plot_loss_curve(epoch_losses, model_filename):
-    # Plot the loss curve
-    plt.figure(figsize=(8, 6))
+def weights(annotated_file):
+    df = annotated_file
+
+    # Inicializa contadores para las clases positiva y negativa
+    positives = 0
+    negatives = 0
+
+    # Cuenta ejemplos de cada clase
+    for _, row in df.iterrows():
+        presence = row['Presence']
+        if presence == -1:
+            negatives += 1
+        else:
+            positives += 1
+
+    # Calcula la frecuencia de cada clase
+    total = positives + negatives
+    pos_weight = total / positives if positives > 0 else 1.0
+    neg_weight = total / negatives if negatives > 0 else 1.0
+
+    return pos_weight, neg_weight
+
+def plot_loss_curve(epoch_losses, epoch_accuracies,epoch_recalls, model_filename):
+    os.makedirs(r"Git\Histopathological_Diagnosis\train_plots", exist_ok=True)
+    
+    plt.figure(figsize=(10, 12))
+    #(loss)
+    plt.subplot(3, 1, 1)
     plt.plot(range(1, len(epoch_losses) + 1), epoch_losses, marker='o', color='b', label="Train Loss")
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
-    plt.title(f"Loss Curve for {model_filename}")
+    plt.title(f"Loss, Accuracy, and Recall Curves for {model_filename}")
     plt.legend()
-
-    # Save the plot in the 'saved_models' folder
-    save_path = os.path.join("saved_models", f"{model_filename}_loss_curve.png")
-    os.makedirs("saved_models", exist_ok=True)
-    plt.savefig(save_path)
-    print(f"Saved loss curve to {save_path}")
+    
+    #(accuracy)
+    plt.subplot(3, 1, 2)
+    plt.plot(range(1, len(epoch_accuracies) + 1), epoch_accuracies, marker='o', color='g', label="Train Accuracy")
+    plt.xlabel("Epochs")
+    plt.ylabel("Accuracy")
+    plt.legend()
+    
+    #(recall)
+    plt.subplot(3, 1, 3)
+    plt.plot(range(1, len(epoch_recalls) + 1), epoch_recalls, marker='o', color='r', label="Train Recall")
+    plt.xlabel("Epochs")
+    plt.ylabel("Recall")
+    plt.legend()
+    
+    save_path_combined = os.path.join(r"Git\Histopathological_Diagnosis\train_plots", f"{model_filename}_metrics.png")
+    plt.savefig(save_path_combined)
     plt.close()
+    print(f"Saved combined metrics plot to {save_path_combined}")
 
 def train_model(custom_model, train_loader, criterion, optimizer, device, epochs=5):
     # To store the loss, accuracy and recall for each epoch
@@ -199,7 +235,7 @@ def train_model(custom_model, train_loader, criterion, optimizer, device, epochs
         else:
             train_recall = 0
 
-        # Store the loss and accuracy for the current epoch
+        # Store the loss, accuracy, recall for the current epoch
         epoch_losses.append(avg_train_loss)
         epoch_accuracies.append(train_accuracy)
         epoch_recalls.append(train_recall)
@@ -234,10 +270,11 @@ if model_decision == 0:
     
     """
 
-    annotated_csv = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\all_annotations_with_patient_diagnosis.csv")
+    #annotated_csv = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\all_annotations_with_patient_diagnosis.csv")
+    annotated_csv = pd.read_csv(r"Git\Histopathological_Diagnosis\all_annotations_with_patient_diagnosis.csv")
 
     # Load all images from `USABLE_annotated` using all_annotations
-    data_dir = r"USABLE_annotated"
+    data_dir = r"Git\Histopathological_Diagnosis\USABLE_annotated"
     img_list = LoadAnnotated(annotated_csv, data_dir)  # Assuming this function loads all images for the patches specified
     transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
     dataset = StandardImageDataset(annotated_csv, img_list, transform=transform)
@@ -246,12 +283,13 @@ if model_decision == 0:
     print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
 
     # Set up folder to save models
-    save_folder = "saved_models"
+    #save_folder = "saved_models"
+    save_folder = r"Git\Histopathological_Diagnosis\best_saved_models"
     os.makedirs(save_folder, exist_ok=True)
 
     # Set up folder to save validations
-    save_folder = "validation_and_training_data"
-    os.makedirs(save_folder, exist_ok=True)
+    save_folder1 = r"Git\Histopathological_Diagnosis\validation_and_training_data"
+    os.makedirs(save_folder1, exist_ok=True)
 
     # Group by `Pat_ID` and use the first `Presence` value for each patient as the stratification label
     patient_labels = annotated_csv.groupby('Pat_ID')['patient_Diagnosis'].first()
@@ -283,7 +321,8 @@ if model_decision == 0:
             'train_labels': train_labels,  # Save the patient-level labels
             'train_indices': train_idx
         }
-        torch.save(train_subset_info, os.path.join(save_folder, f"train_subset_info_fold{fold+1}.pth"))
+        torch.save(train_subset_info, os.path.join(save_folder1, f"train_subset_info_fold{fold+1}.pth"))
+
         # For the validation set, add the patient-level labels along with indices
         val_labels = val_df['patient_Diagnosis'].values.tolist()  # Patient-level labels for the validation set
         val_subset_info = {
@@ -291,7 +330,7 @@ if model_decision == 0:
             'val_labels': val_labels,  # Save the patient-level labels
             'val_indices': val_idx
         }
-        torch.save(val_subset_info, os.path.join(save_folder, f"val_subset_info_fold{fold+1}.pth"))
+        torch.save(val_subset_info, os.path.join(save_folder1, f"val_subset_info_fold{fold+1}.pth"))
 
         # Create subsets for training and validation
         train_subset = Subset(dataset, train_idx)
@@ -303,7 +342,7 @@ if model_decision == 0:
 
         # Save the validation indices (from 'val_patient_ids') and the associated dataset (e.g., validation annotations)
         val_subset_indices = {'val_patient_ids': val_patient_ids, 'val_indices': val_idx}
-        torch.save(val_subset_indices, os.path.join(save_folder, f"val_subset_indices_fold{fold+1}.pth"))
+        torch.save(val_subset_indices, os.path.join(save_folder1, f"val_subset_indices_fold{fold+1}.pth"))
 
         fold_accuracies[fold + 1] = []
 
@@ -313,6 +352,15 @@ if model_decision == 0:
             print(f"Training config {config_idx}/{len(all_configurations)} in fold {fold + 1}")
             print(f"Configuration details: {config}")
             
+            filename = (f"{config['model_name']}_{config['num_layers']}layers_"
+                        f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}.pth")
+            
+            save_path = os.path.join(save_folder, filename)
+
+            if os.path.exists(save_path):
+                print(f"Model {filename} exists. jump...")
+                continue
+
             # Initialize the custom model
             custom_model = CustomModel(
                 model_name=config["model_name"],
@@ -326,20 +374,25 @@ if model_decision == 0:
             
             # Set device
             device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            if torch.cuda.is_available():
+                print("CUDA está disponible. Usando GPU:", torch.cuda.get_device_name(0))
+            else:
+                print("CUDA no está disponible. Usando CPU.")
+            
             custom_model.to(device)
             
             # Define loss and optimizer
             pos_weight, neg_weight = weights(annotated_csv)  # Assumes this function calculates class weights
             weight = torch.tensor([pos_weight, neg_weight], device=device)
             criterion = nn.CrossEntropyLoss(weight=weight)
-            optimizer = torch.optim.Adam(custom_model.parameters(), lr=1e-4)
+            optimizer = torch.optim.Adam(custom_model.parameters(), lr= 1e-4)# 5e-7) 
             
             # Train the model
-            epoch_losses, epoch_accuracies, epoch_recall = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=25)
+            epoch_losses, epoch_accuracies, epoch_recall = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=20)
             
             model_filename = (f"{config['model_name']}_{config['num_layers']}layers_"
                         f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}")
-            plot_loss_curve(epoch_losses, model_filename)
+            plot_loss_curve(epoch_losses, epoch_accuracies, epoch_recall, model_filename)
 
             # Calculate and save mean accuracy for this fold
             mean_fold_accuracy = np.mean(epoch_accuracies)
@@ -438,4 +491,4 @@ elif model_decision == 1:
         print(f"Saved autoencoder model for fold {fold + 1} at {save_path}")
 
 
-#log_file.close()
+log_file.close()

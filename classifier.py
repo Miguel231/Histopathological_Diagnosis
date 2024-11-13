@@ -7,7 +7,8 @@ from collections import OrderedDict
 from itertools import product
 
 # Set a custom cache directory for PyTorch models
-torch.hub.set_dir("C:/Users/larar/torch_cache")
+#torch.hub.set_dir("C:/Users/larar/torch_cache")
+torch.hub.set_dir(r"C:\Users\migue\torch_cache")
 
 # Step 1: Generic function to load a model and return its feature size
 def get_model_and_features(model_name, pretrained=True):
