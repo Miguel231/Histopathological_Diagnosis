@@ -192,12 +192,8 @@ def evaluate_model_with_classifier(model, val_loader, device, save_curve_folder,
     plt.title("Receiver Operating Characteristic")
     plt.legend(loc="lower right")
     
-    # Ensure the save folder exists
-    roc_folder = os.path.join(save_curve_folder, "roc_curves")
-    os.makedirs(roc_folder, exist_ok=True)
-
     # Save the ROC curve plot with the model name
-    roc_save_path = os.path.join(roc_folder, f"roc_curve_{model_name}.png")
+    roc_save_path = os.path.join(save_curve_folder, f"roc_curve_{model_name}.png")
     plt.savefig(roc_save_path)
 
     # Find the optimal threshold (using the ROC curve)
