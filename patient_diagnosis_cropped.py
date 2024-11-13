@@ -11,6 +11,7 @@ from classifier import CustomModel
 import seaborn as sns
 from PIL import Image
 import warnings
+from model_config import all_configurations
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore")
 
@@ -32,8 +33,43 @@ def LoadAnnotated(df, data_dir):
             IMS.append(image)
         else:
             print(f"Warning: File {file_path} not found.")
-    
+            try:
+                os.remove(file_path)
+                print(f"Deleted corrupted file: {file_path}")
+            except Exception as delete_error:
+                print(f"Error deleting file {file_path}: {delete_error}")    
     return IMS
+
+def LoadAnnotated_1(df, data_dir):
+    images = []
+    labels = []
+    
+    # Iterate over each row in the DataFrame
+    for _, row in df.iterrows():
+        pat_id = row['CODI']  # Extract Pat_ID (patient identifier)
+        print(f"Processing patient ID: {pat_id}")
+        label = row['DENSITAT']  # Extract DENSITY (patient diagnosis/label)
+        
+        # Loop through each file in the directory
+        for filename in os.listdir(data_dir):
+            # Check if the filename starts with the Pat_ID (assuming the pattern 'Pat_ID_*')
+            if filename.startswith(f"{pat_id}_"):
+                file_path = os.path.join(data_dir, filename)
+                
+                # Check if the file exists
+                if os.path.exists(file_path):
+                    try:
+                        # Open the image and convert to RGB
+                        with Image.open(file_path) as img:
+                            img = img.convert("RGB")
+                            images.append(img)
+                            labels.append(label)
+                    except Exception as e:
+                        print(f"Error loading image {file_path}: {e}")
+                else:
+                    print(f"Warning: File {file_path} not found.")
+    
+    return images, labels
 
 class StandardImageDataset(Dataset):
     def __init__(self, annotations_file, img_list, transform=None):
@@ -74,6 +110,7 @@ def load_model(model_path, device,config):
                 num_classes=2
             )
     model.load_state_dict(torch.load(model_path))
+    #model.load_state_dict(torch.load(model_path, map_location=device))
     model.to(device)
     model.eval()  # Set the model to evaluation mode
     return model
@@ -211,52 +248,48 @@ def evaluate_model_with_classifier(model, val_loader, device):
     return accuracy, precision, recall, f1, conf_matrix, roc_auc, optimal_threshold
 
 
-def evaluate_models(saved_models_folder, save_folder, val_loader, device, mode):
+def Patient_Diagnosis(saved_models_folder, save_folder, val_loader, device, mode):
     evaluation_metrics = []
-
+    i = 0
     for model_filename in os.listdir(saved_models_folder):
         if model_filename.endswith(".pth"):
             print(f"Evaluating model: {model_filename}")
             
             # Load the saved model
             model_path = os.path.join(saved_models_folder, model_filename)
-            config = {
-                    "model_name": "densenet201",
-                    "num_layers": 1,
-                    "units_per_layer": [64],
-                    "dropout": 0.25
+            configuration = all_configurations
+            for config in configuration:
+                model = load_model(model_path, device,config)
+
+                # Evaluate model based on its type (autoencoder vs classifier)
+                if mode == 1:  # Autoencoder
+                    print("AUTOENCODER")
+                    accuracy, precision, recall, f1, conf_matrix, roc_auc, optimal_threshold = evaluate_model_with_autoencoder(model, val_loader, device)
+                elif mode == 0:  # Classifier
+                    print("CLASSIFIER")
+                    accuracy, precision, recall, f1, conf_matrix, roc_auc, optimal_threshold = evaluate_model_with_classifier(model, val_loader, device)
+                    print("ACCURACY",accuracy)
+                # Save evaluation metrics
+                evaluation_results = {
+                    "accuracy": accuracy,
+                    "precision": precision,
+                    "recall": recall,
+                    "f1_score": f1,
+                    "confusion_matrix": [conf_matrix.tolist()]  # Convert to list for saving
                 }
-            model = load_model(model_path, device,config)
+                
+                if mode == "0":  # For classifier, also add ROC AUC and optimal threshold
+                    evaluation_results["roc_auc"] = roc_auc
+                    evaluation_results["optimal_threshold"] = optimal_threshold
+                elif mode == "1":  # For autoencoder, also add ROC AUC and optimal threshold
+                    evaluation_results["roc_auc"] = roc_auc
+                    evaluation_results["optimal_threshold"] = optimal_threshold
 
-            # Evaluate model based on its type (autoencoder vs classifier)
-            if mode == 1:  # Autoencoder
-                print("AUTOENCODER")
-                accuracy, precision, recall, f1, conf_matrix, roc_auc, optimal_threshold = evaluate_model_with_autoencoder(model, val_loader, device)
-            elif mode == 0:  # Classifier
-                print("CLASSIFIER")
-                accuracy, precision, recall, f1, conf_matrix, roc_auc, optimal_threshold = evaluate_model_with_classifier(model, val_loader, device)
-                print("ACCURACY",accuracy)
-            # Save evaluation metrics
-            evaluation_results = {
-                "accuracy": accuracy,
-                "precision": precision,
-                "recall": recall,
-                "f1_score": f1,
-                "confusion_matrix": [conf_matrix.tolist()]  # Convert to list for saving
-            }
-            
-            if mode == "0":  # For classifier, also add ROC AUC and optimal threshold
-                evaluation_results["roc_auc"] = roc_auc
-                evaluation_results["optimal_threshold"] = optimal_threshold
-            elif mode == "1":  # For autoencoder, also add ROC AUC and optimal threshold
-                evaluation_results["roc_auc"] = roc_auc
-                evaluation_results["optimal_threshold"] = optimal_threshold
-
-            evaluation_metrics.append(evaluation_results)
-            
-            # Plot and save confusion matrix
-            cm_save_path = os.path.join(save_folder, f"{model_filename}_confusion_matrix.png")
-            plot_confusion_matrix(conf_matrix, cm_save_path)
+                evaluation_metrics.append(evaluation_results)
+                
+                # Plot and save confusion matrix
+                cm_save_path = os.path.join(save_folder, f"{model_filename}_confusion_matrix.png")
+                plot_confusion_matrix(conf_matrix, cm_save_path)
 
     # Save all evaluation results to CSV
     evaluation_df = pd.DataFrame(evaluation_metrics)
@@ -271,20 +304,19 @@ if mode == 0:
     annotated_csv = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\TRAIN_DATA_cropped.csv")
     # Load all images from `USABLE_annotated` using all_annotations
     data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\USABLE_cropped"
-    img_list = LoadAnnotated(annotated_csv, data_dir)  # Assuming this function loads all images for the patches specified
+    img_list = LoadAnnotated_1(annotated_csv, data_dir)  # Assuming this function loads all images for the patches specified
     transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
     dataset = StandardImageDataset(annotated_csv, img_list, transform=transform)
     # Set up folder to save models
     save_folder = "save_evaluations"
     os.makedirs(save_folder, exist_ok=True)
     # You can now filter the dataset again based on these indices if needed
-    val_subset_indices = torch.load(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\validation_data\val_subset_indices_fold1.pth")
+    val_subset_indices = torch.load(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\validation_and_training_data\val_subset_info_fold1.pth")
     val_subset = Subset(dataset, val_subset_indices['val_indices'])
     # Create the validation DataLoader using the same batch size and shuffle settings
     val_loader = DataLoader(val_subset, batch_size=32, shuffle=False)
     # Define the device (CUDA or CPU)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    saved_models = "saved_models"
-    # Folder containing the saved models
+    saved_models = "best_saved_models"
     # Start evaluating all models
-    evaluate_models(saved_models,save_folder, val_loader, device,mode)
+    Patient_Diagnosis(saved_models,save_folder, val_loader, device, mode)
