@@ -73,8 +73,8 @@ all_configurations = [
         "num_layers": 2,
         "units_per_layer": [64, 128],
         "dropout": 0.25
-    },]
-"""
+    },
+
     #3 layers: resnet50
     {
         "model_name": "resnet50",
@@ -102,4 +102,3 @@ all_configurations = [
         "dropout": 0.25
     }
 ]
-"""

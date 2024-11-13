@@ -32,7 +32,7 @@ class Tee:
         for fileobj in self.fileobjs:
             fileobj.flush()
 
-log_file = open(r'Git\Histopathological_Diagnosis\best_models_training.txt', 'w')  
+log_file = open(r'Histopathological_Diagnosis\best_models_training.txt', 'w')  
 sys.stdout = Tee(sys.stdout, log_file)  
 
 def LoadAnnotated(df, data_dir):
@@ -157,7 +157,7 @@ def weights(annotated_file):
     return pos_weight, neg_weight
 
 def plot_loss_curve(epoch_losses, epoch_accuracies,epoch_recalls, model_filename):
-    os.makedirs(r"Git\Histopathological_Diagnosis\train_plots", exist_ok=True)
+    os.makedirs(r"Histopathological_Diagnosis\train_plots", exist_ok=True)
     
     plt.figure(figsize=(10, 12))
     #(loss)
@@ -182,7 +182,7 @@ def plot_loss_curve(epoch_losses, epoch_accuracies,epoch_recalls, model_filename
     plt.ylabel("Recall")
     plt.legend()
     
-    save_path_combined = os.path.join(r"Git\Histopathological_Diagnosis\train_plots", f"{model_filename}_metrics.png")
+    save_path_combined = os.path.join(r"Histopathological_Diagnosis\train_plots", f"{model_filename}_metrics.png")
     plt.savefig(save_path_combined)
     plt.close()
     print(f"Saved combined metrics plot to {save_path_combined}")
@@ -272,10 +272,10 @@ if model_decision == 0:
     """
 
     #annotated_csv = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\all_annotations_with_patient_diagnosis.csv")
-    annotated_csv = pd.read_csv(r"Git\Histopathological_Diagnosis\all_annotations_with_patient_diagnosis.csv")
+    annotated_csv = pd.read_csv(r"Histopathological_Diagnosis\all_annotations_with_patient_diagnosis.csv")
 
     # Load all images from `USABLE_annotated` using all_annotations
-    data_dir = r"Git\Histopathological_Diagnosis\USABLE_annotated"
+    data_dir = r"Histopathological_Diagnosis\USABLE_annotated"
     img_list = LoadAnnotated(annotated_csv, data_dir)  # Assuming this function loads all images for the patches specified
     transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
     dataset = StandardImageDataset(annotated_csv, img_list, transform=transform)
@@ -285,11 +285,11 @@ if model_decision == 0:
 
     # Set up folder to save models
     #save_folder = "saved_models"
-    save_folder = r"Git\Histopathological_Diagnosis\best_saved_models"
+    save_folder = r"Histopathological_Diagnosis\best_saved_models"
     os.makedirs(save_folder, exist_ok=True)
 
     # Set up folder to save validations
-    save_folder1 = r"Git\Histopathological_Diagnosis\validation_and_training_data"
+    save_folder1 = r"Histopathological_Diagnosis\validation_and_training_data"
     os.makedirs(save_folder1, exist_ok=True)
 
     # Group by `Pat_ID` and use the first `Presence` value for each patient as the stratification label
@@ -338,8 +338,8 @@ if model_decision == 0:
         val_subset = Subset(dataset, val_idx)
 
         # Data loaders
-        train_loader = DataLoader(train_subset, batch_size=32, shuffle=False)
-        val_loader = DataLoader(val_subset, batch_size=32, shuffle=False)
+        train_loader = DataLoader(train_subset, batch_size=64, shuffle=False)
+        val_loader = DataLoader(val_subset, batch_size=64, shuffle=False)
 
         fold_accuracies[fold + 1] = []
 
@@ -382,10 +382,10 @@ if model_decision == 0:
             pos_weight, neg_weight = weights(annotated_csv)  # Assumes this function calculates class weights
             weight = torch.tensor([pos_weight, neg_weight], device=device)
             criterion = nn.CrossEntropyLoss(weight=weight)
-            optimizer = torch.optim.Adam(custom_model.parameters(), lr= 5e-7) 
+            optimizer = torch.optim.Adam(custom_model.parameters(), lr= 1e-4) 
             
             # Train the model
-            epoch_losses, epoch_accuracies, epoch_recall = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=20)
+            epoch_losses, epoch_accuracies, epoch_recall = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=25)
             
             model_filename = (f"{config['model_name']}_{config['num_layers']}layers_"
                         f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}")
