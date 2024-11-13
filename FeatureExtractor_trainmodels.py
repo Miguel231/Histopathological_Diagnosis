@@ -248,166 +248,166 @@ def train_model(custom_model, train_loader, criterion, optimizer, device, epochs
 # Track and save mean accuracy
 model_accuracies = {}
 
-#model_decision = int(input("Select the method you want to proceed ( 0 = classifier and 1 = autoencoder): "))
-#if model_decision == 0:
+model_decision = 0 #int(input("Select the method you want to proceed ( 0 = classifier and 1 = autoencoder): "))
+if model_decision == 0:
 
-"""
-#patient_data = pd.read_csv(r"C:/Users/larar/OneDrive/Documentos/Escritorio/Histopathological_Diagnosis-5/TRAIN_DATA_cropped.csv")
-#patient_data = patient_data.rename(columns={"CODI": "Pat_ID"})
-# Step 1: Load the Positive and Negative Patient Data
-#positive_patches = pd.read_csv("positive_patches.csv")
-#negative_patches = pd.read_csv("negative_patches.csv")
-# Concatenate to form a single DataFrame containing all patch-level data
-#all_annotations = pd.concat([positive_patches, negative_patches], ignore_index=True)
-# Set up binary Presence values for classification
-#all_annotations['Presence'] = all_annotations['Presence'].map({-1: 0, 1: 1})
-# Merge all_annotations with patient_data, adding `DENSITY` as a new column `patient_Diagnosis`
-#all_annotations = all_annotations.merge(patient_data[['Pat_ID', 'DENSITAT']], on="Pat_ID", how="left")
-# Rename `DENSITY` to `patient_Diagnosis`
-#all_annotations = all_annotations.rename(columns={"DENSITAT": "patient_Diagnosis"})
-# Save to a CSV file to inspect the merged data
-#all_annotations.to_csv("all_annotations_with_patient_diagnosis.csv", index=False)
-#print("Merged data with patient_Diagnosis column saved to 'all_annotations_with_patient_diagnosis.csv'.")
-
-"""
-
-#annotated_csv = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\all_annotations_with_patient_diagnosis.csv")
-annotated_csv = pd.read_csv(r"Histopathological_Diagnosis\all_annotations_with_patient_diagnosis.csv")
-
-# Load all images from `USABLE_annotated` using all_annotations
-data_dir = r"Histopathological_Diagnosis\USABLE_annotated"
-img_list = LoadAnnotated(annotated_csv, data_dir)  # Assuming this function loads all images for the patches specified
-transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
-dataset = StandardImageDataset(annotated_csv, img_list, transform=transform)
-
-print(f"Total number of configurations: {len(all_configurations)}")
-print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
-
-# Set up folder to save models
-#save_folder = "saved_models"
-save_folder = r"Histopathological_Diagnosis\best_saved_models"
-os.makedirs(save_folder, exist_ok=True)
-
-# Set up folder to save validations
-save_folder1 = r"Histopathological_Diagnosis\validation_and_training_data"
-os.makedirs(save_folder1, exist_ok=True)
-
-# Group by `Pat_ID` and use the first `Presence` value for each patient as the stratification label
-patient_labels = annotated_csv.groupby('Pat_ID')['patient_Diagnosis'].first()
-
-# Set up Stratified K-Fold at patient level
-k_folds = 3
-strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=False)
-fold_indices = []
-fold_accuracies = {}
-for fold, (train_patient_idx, val_patient_idx) in enumerate(strat_kfold.split(patient_labels.index, patient_labels)):
-    print(f"Starting fold {fold + 1}/{k_folds}")
+    """
+    #patient_data = pd.read_csv(r"C:/Users/larar/OneDrive/Documentos/Escritorio/Histopathological_Diagnosis-5/TRAIN_DATA_cropped.csv")
+    #patient_data = patient_data.rename(columns={"CODI": "Pat_ID"})
+    # Step 1: Load the Positive and Negative Patient Data
+    #positive_patches = pd.read_csv("positive_patches.csv")
+    #negative_patches = pd.read_csv("negative_patches.csv")
+    # Concatenate to form a single DataFrame containing all patch-level data
+    #all_annotations = pd.concat([positive_patches, negative_patches], ignore_index=True)
+    # Set up binary Presence values for classification
+    #all_annotations['Presence'] = all_annotations['Presence'].map({-1: 0, 1: 1})
+    # Merge all_annotations with patient_data, adding `DENSITY` as a new column `patient_Diagnosis`
+    #all_annotations = all_annotations.merge(patient_data[['Pat_ID', 'DENSITAT']], on="Pat_ID", how="left")
+    # Rename `DENSITY` to `patient_Diagnosis`
+    #all_annotations = all_annotations.rename(columns={"DENSITAT": "patient_Diagnosis"})
+    # Save to a CSV file to inspect the merged data
+    #all_annotations.to_csv("all_annotations_with_patient_diagnosis.csv", index=False)
+    #print("Merged data with patient_Diagnosis column saved to 'all_annotations_with_patient_diagnosis.csv'.")
     
-    # Select train and validation patient IDs
-    train_patient_ids = patient_labels.index[train_patient_idx]
-    val_patient_ids = patient_labels.index[val_patient_idx]
-    
-    # Filter patches based on these patient IDs
-    train_df = annotated_csv[annotated_csv['Pat_ID'].isin(train_patient_ids)]
-    val_df = annotated_csv[annotated_csv['Pat_ID'].isin(val_patient_ids)]
-    
-    # Collect indices for train and validation patches
-    train_idx = train_df.index.tolist()
-    val_idx = val_df.index.tolist()
+    """
 
-    # For the training set, you already have the necessary information
-    train_labels = train_df['patient_Diagnosis'].values.tolist()  # Patient-level labels for the training set
-    train_subset_info = {
-        'train_patient_ids': train_patient_ids,
-        'train_labels': train_labels,  # Save the patient-level labels
-        'train_indices': train_idx
-    }
-    torch.save(train_subset_info, os.path.join(save_folder1, f"train_subset_info_fold{fold+1}.pth"))
+    #annotated_csv = pd.read_csv(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\all_annotations_with_patient_diagnosis.csv")
+    annotated_csv = pd.read_csv(r"Histopathological_Diagnosis\all_annotations_with_patient_diagnosis.csv")
 
-    # For the validation set, add the patient-level labels along with indices
-    val_labels = val_df['patient_Diagnosis'].values.tolist()  # Patient-level labels for the validation set
-    val_subset_info = {
-        'val_patient_ids': val_patient_ids,
-        'val_labels': val_labels,  # Save the patient-level labels
-        'val_indices': val_idx
-    }
-    torch.save(val_subset_info, os.path.join(save_folder1, f"val_subset_info_fold{fold+1}.pth"))
+    # Load all images from `USABLE_annotated` using all_annotations
+    data_dir = r"Histopathological_Diagnosis\USABLE_annotated"
+    img_list = LoadAnnotated(annotated_csv, data_dir)  # Assuming this function loads all images for the patches specified
+    transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
+    dataset = StandardImageDataset(annotated_csv, img_list, transform=transform)
 
-    # Create subsets for training and validation
-    train_subset = Subset(dataset, train_idx)
-    val_subset = Subset(dataset, val_idx)
+    print(f"Total number of configurations: {len(all_configurations)}")
+    print("CREATE TRAIN AND TEST SUBSET WITH KFOLD")
 
-    # Data loaders
-    train_loader = DataLoader(train_subset, batch_size=64, shuffle=False)
-    val_loader = DataLoader(val_subset, batch_size=64, shuffle=False)
+    # Set up folder to save models
+    #save_folder = "saved_models"
+    save_folder = r"Histopathological_Diagnosis\best_saved_models"
+    os.makedirs(save_folder, exist_ok=True)
 
-    fold_accuracies[fold + 1] = []
+    # Set up folder to save validations
+    save_folder1 = r"Histopathological_Diagnosis\validation_and_training_data"
+    os.makedirs(save_folder1, exist_ok=True)
 
-    # Loop through each model configuration
-    
-    for config_idx, config in enumerate(all_configurations, start=1):
-        print(f"Training config {config_idx}/{len(all_configurations)} in fold {fold + 1}")
-        print(f"Configuration details: {config}")
+    # Group by `Pat_ID` and use the first `Presence` value for each patient as the stratification label
+    patient_labels = annotated_csv.groupby('Pat_ID')['patient_Diagnosis'].first()
+
+    # Set up Stratified K-Fold at patient level
+    k_folds = 3
+    strat_kfold = StratifiedKFold(n_splits=k_folds, shuffle=False)
+    fold_indices = []
+    fold_accuracies = {}
+    for fold, (train_patient_idx, val_patient_idx) in enumerate(strat_kfold.split(patient_labels.index, patient_labels)):
+        print(f"Starting fold {fold + 1}/{k_folds}")
         
-        filename = (f"{config['model_name']}_{config['num_layers']}layers_"
-                    f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}.pth")
+        # Select train and validation patient IDs
+        train_patient_ids = patient_labels.index[train_patient_idx]
+        val_patient_ids = patient_labels.index[val_patient_idx]
         
-        save_path = os.path.join(save_folder, filename)
+        # Filter patches based on these patient IDs
+        train_df = annotated_csv[annotated_csv['Pat_ID'].isin(train_patient_ids)]
+        val_df = annotated_csv[annotated_csv['Pat_ID'].isin(val_patient_ids)]
+        
+        # Collect indices for train and validation patches
+        train_idx = train_df.index.tolist()
+        val_idx = val_df.index.tolist()
 
-        if os.path.exists(save_path):
-            print(f"Model {filename} exists. jump...")
-            continue
+        # For the training set, you already have the necessary information
+        train_labels = train_df['patient_Diagnosis'].values.tolist()  # Patient-level labels for the training set
+        train_subset_info = {
+            'train_patient_ids': train_patient_ids,
+            'train_labels': train_labels,  # Save the patient-level labels
+            'train_indices': train_idx
+        }
+        torch.save(train_subset_info, os.path.join(save_folder1, f"train_subset_info_fold{fold+1}.pth"))
 
-        # Initialize the custom model
-        custom_model = CustomModel(
-            model_name=config["model_name"],
-            embedding_dim=None,
-            fc_layers=config["units_per_layer"],
-            activations=["relu"] * config["num_layers"],
-            batch_norms=[None] * config["num_layers"],
-            dropout=config["dropout"],
-            num_classes=2
-        )
-        
-        # Set device
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        if torch.cuda.is_available():
-            print("CUDA está disponible. Usando GPU:", torch.cuda.get_device_name(0))
-        else:
-            print("CUDA no está disponible. Usando CPU.")
-        
-        custom_model.to(device)
-        
-        # Define loss and optimizer
-        pos_weight, neg_weight = weights(annotated_csv)  # Assumes this function calculates class weights
-        weight = torch.tensor([pos_weight, neg_weight], device=device)
-        criterion = nn.CrossEntropyLoss(weight=weight)
-        optimizer = torch.optim.Adam(custom_model.parameters(), lr= 1e-4) 
-        
-        # Train the model
-        epoch_losses, epoch_accuracies, epoch_recall = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=25)
-        
-        model_filename = (f"{config['model_name']}_{config['num_layers']}layers_"
-                    f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}")
-        plot_loss_curve(epoch_losses, epoch_accuracies, epoch_recall, model_filename)
+        # For the validation set, add the patient-level labels along with indices
+        val_labels = val_df['patient_Diagnosis'].values.tolist()  # Patient-level labels for the validation set
+        val_subset_info = {
+            'val_patient_ids': val_patient_ids,
+            'val_labels': val_labels,  # Save the patient-level labels
+            'val_indices': val_idx
+        }
+        torch.save(val_subset_info, os.path.join(save_folder1, f"val_subset_info_fold{fold+1}.pth"))
 
-        # Calculate and save mean accuracy for this fold
-        mean_fold_accuracy = np.mean(epoch_accuracies)
-        fold_accuracies[fold + 1].append(mean_fold_accuracy)
-        # Save the model after training
-        filename = (f"{config['model_name']}_{config['num_layers']}layers_"
-                    f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}.pth")
-        save_path = os.path.join(save_folder, filename)
-        # Move model to CPU before saving
-        custom_model.to('cpu')
-        torch.save(custom_model.state_dict(), save_path)
-        print(f"Saved model: {filename}")
-        # Frre cache from GPU
-        torch.cuda.empty_cache()
-        # Free memory from the trash collector
-        gc.collect()
+        # Create subsets for training and validation
+        train_subset = Subset(dataset, train_idx)
+        val_subset = Subset(dataset, val_idx)
 
-"""elif model_decision == 1:
+        # Data loaders
+        train_loader = DataLoader(train_subset, batch_size=64, shuffle=False)
+        val_loader = DataLoader(val_subset, batch_size=64, shuffle=False)
+
+        fold_accuracies[fold + 1] = []
+
+        # Loop through each model configuration
+        
+        for config_idx, config in enumerate(all_configurations, start=1):
+            print(f"Training config {config_idx}/{len(all_configurations)} in fold {fold + 1}")
+            print(f"Configuration details: {config}")
+            
+            filename = (f"{config['model_name']}_{config['num_layers']}layers_"
+                        f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}.pth")
+            
+            save_path = os.path.join(save_folder, filename)
+
+            if os.path.exists(save_path):
+                print(f"Model {filename} exists. jump...")
+                continue
+
+            # Initialize the custom model
+            custom_model = CustomModel(
+                model_name=config["model_name"],
+                embedding_dim=None,
+                fc_layers=config["units_per_layer"],
+                activations=["relu"] * config["num_layers"],
+                batch_norms=[None] * config["num_layers"],
+                dropout=config["dropout"],
+                num_classes=2
+            )
+            
+            # Set device
+            device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            if torch.cuda.is_available():
+                print("CUDA está disponible. Usando GPU:", torch.cuda.get_device_name(0))
+            else:
+                print("CUDA no está disponible. Usando CPU.")
+            
+            custom_model.to(device)
+            
+            # Define loss and optimizer
+            pos_weight, neg_weight = weights(annotated_csv)  # Assumes this function calculates class weights
+            weight = torch.tensor([pos_weight, neg_weight], device=device)
+            criterion = nn.CrossEntropyLoss(weight=weight)
+            optimizer = torch.optim.Adam(custom_model.parameters(), lr= 1e-4) 
+            
+            # Train the model
+            epoch_losses, epoch_accuracies, epoch_recall = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=25)
+            
+            model_filename = (f"{config['model_name']}_{config['num_layers']}layers_"
+                        f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}")
+            plot_loss_curve(epoch_losses, epoch_accuracies, epoch_recall, model_filename)
+
+            # Calculate and save mean accuracy for this fold
+            mean_fold_accuracy = np.mean(epoch_accuracies)
+            fold_accuracies[fold + 1].append(mean_fold_accuracy)
+            # Save the model after training
+            filename = (f"{config['model_name']}_{config['num_layers']}layers_"
+                        f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}.pth")
+            save_path = os.path.join(save_folder, filename)
+            # Move model to CPU before saving
+            custom_model.to('cpu')
+            torch.save(custom_model.state_dict(), save_path)
+            print(f"Saved model: {filename}")
+            # Frre cache from GPU
+            torch.cuda.empty_cache()
+            # Free memory from the trash collector
+            gc.collect()
+
+elif model_decision == 1:
     annotations_file = pd.read_csv(r"TRAIN_DATA_cropped.csv")
     data_dir = r"C:\Users\larar\OneDrive\Documentos\Escritorio\USABLE_cropped"
     # Check if the directory exists
@@ -492,6 +492,6 @@ for fold, (train_patient_idx, val_patient_idx) in enumerate(strat_kfold.split(pa
         save_path = os.path.join("saved_models", filename)
         torch.save(model.state_dict(), save_path)
         print(f"Saved autoencoder model for fold {fold + 1} at {save_path}")
-"""
+
 
 log_file.close()
