@@ -385,7 +385,7 @@ if model_decision == 0:
             pos_weight, neg_weight = weights(annotated_csv)  # Assumes this function calculates class weights
             weight = torch.tensor([pos_weight, neg_weight], device=device)
             criterion = nn.CrossEntropyLoss(weight=weight)
-            optimizer = torch.optim.Adam(custom_model.parameters(), lr= 1e-4)# 5e-7) 
+            optimizer = torch.optim.Adam(custom_model.parameters(), lr= 5e-7) 
             
             # Train the model
             epoch_losses, epoch_accuracies, epoch_recall = train_model(custom_model, train_loader, criterion, optimizer, device, epochs=20)
