@@ -149,7 +149,7 @@ def evaluate_model_with_autoencoder(model, val_loader, device):
     return accuracy, precision, recall, f1, conf_matrix, roc_auc, optimal_threshold
 
 
-def evaluate_model_with_classifier(model, val_loader, device):
+def evaluate_model_with_classifier(model, val_loader, device, save_curve_folder,model_name):
     model.eval()  # Ensure model is in evaluation mode
     all_labels = []
     all_probs = []  # Probabilities of the positive class
@@ -191,29 +191,39 @@ def evaluate_model_with_classifier(model, val_loader, device):
     plt.ylabel("True Positive Rate")
     plt.title("Receiver Operating Characteristic")
     plt.legend(loc="lower right")
-    plt.show()
+    
+    # Save the ROC curve plot with the model name
+    roc_save_path = os.path.join(save_curve_folder, f"roc_curve_{model_name}.png")
+    plt.savefig(roc_save_path)
 
     # Find the optimal threshold (using the ROC curve)
-    optimal_idx = np.argmax(tpr - fpr)  # Maximizing the difference between TPR and FPR
-    optimal_threshold = thresholds[optimal_idx]
-    print(f"Optimal threshold for Classifier: {optimal_threshold}")
+    #optimal_idx = np.argmax(tpr - fpr)  # Maximizing the difference between TPR and FPR
+    #optimal_threshold = thresholds[optimal_idx]
+    #print(f"Optimal threshold for Classifier: {optimal_threshold}")
 
     # Use optimal threshold to classify (thresholding probabilities)
-    preds = (all_probs > optimal_threshold).astype(int)
+    #preds = (all_probs > optimal_threshold).astype(int)
 
     # Traditional metrics
-    accuracy = accuracy_score(all_labels, preds)
-    precision = precision_score(all_labels, preds)
-    recall = recall_score(all_labels, preds)
-    f1 = f1_score(all_labels, preds)
-    conf_matrix = confusion_matrix(all_labels, preds)
+    accuracy = accuracy_score(all_labels, all_probs)
+    precision = precision_score(all_labels, all_probs)
+    recall = recall_score(all_labels, all_probs)
+    f1 = f1_score(all_labels, all_probs)
+    conf_matrix = confusion_matrix(all_labels, all_probs)
 
-    return accuracy, precision, recall, f1, conf_matrix, roc_auc, optimal_threshold
+    return accuracy, precision, recall, f1, conf_matrix, roc_auc
 
 
-def evaluate_models(saved_models_folder, save_folder, val_loader, device, mode):
-    evaluation_metrics = []
+def evaluate_models(saved_models_folder, save_folder, val_loader, device, mode, save_curve_folder):
+    # List to store metrics and corresponding model names
+    all_accuracies = []
+    all_precisions = []
+    all_recalls = []
+    all_f1_scores = []
+    all_aucs = []
+    all_model_names = []  # To store model names
 
+    # Evaluate each model in the saved models folder
     for model_filename in os.listdir(saved_models_folder):
         if model_filename.endswith(".pth"):
             print(f"Evaluating model: {model_filename}")
@@ -226,42 +236,106 @@ def evaluate_models(saved_models_folder, save_folder, val_loader, device, mode):
                     "units_per_layer": [64],
                     "dropout": 0.25
                 }
-            model = load_model(model_path, device,config)
+            model = load_model(model_path, device, config)
 
             # Evaluate model based on its type (autoencoder vs classifier)
             if mode == 1:  # Autoencoder
-                print("AUTOENCODER")
-                accuracy, precision, recall, f1, conf_matrix, roc_auc, optimal_threshold = evaluate_model_with_autoencoder(model, val_loader, device)
+                print("Evaluating Autoencoder...")
+                accuracy, precision, recall, f1, conf_matrix, roc_auc = evaluate_model_with_autoencoder(model, val_loader, device, save_curve_folder, model_filename)
             elif mode == 0:  # Classifier
-                print("CLASSIFIER")
-                accuracy, precision, recall, f1, conf_matrix, roc_auc, optimal_threshold = evaluate_model_with_classifier(model, val_loader, device)
-                print("ACCURACY",accuracy)
-            # Save evaluation metrics
-            evaluation_results = {
-                "accuracy": accuracy,
-                "precision": precision,
-                "recall": recall,
-                "f1_score": f1,
-                "confusion_matrix": [conf_matrix.tolist()]  # Convert to list for saving
-            }
-            
-            if mode == "0":  # For classifier, also add ROC AUC and optimal threshold
-                evaluation_results["roc_auc"] = roc_auc
-                evaluation_results["optimal_threshold"] = optimal_threshold
-            elif mode == "1":  # For autoencoder, also add ROC AUC and optimal threshold
-                evaluation_results["roc_auc"] = roc_auc
-                evaluation_results["optimal_threshold"] = optimal_threshold
+                print("Evaluating Classifier...")
+                accuracy, precision, recall, f1, conf_matrix, roc_auc = evaluate_model_with_classifier(model, val_loader, device)
 
-            evaluation_metrics.append(evaluation_results)
-            
-            # Plot and save confusion matrix
+            # Append the metrics to the corresponding lists along with the model name
+            all_accuracies.append(accuracy)
+            all_precisions.append(precision)
+            all_recalls.append(recall)
+            all_f1_scores.append(f1)
+            all_aucs.append(roc_auc)
+            all_model_names.append(model_filename)  # Add the model filename as the name
+
+            # Save confusion matrix (optional)
             cm_save_path = os.path.join(save_folder, f"{model_filename}_confusion_matrix.png")
             plot_confusion_matrix(conf_matrix, cm_save_path)
 
-    # Save all evaluation results to CSV
-    evaluation_df = pd.DataFrame(evaluation_metrics)
+    # Compute mean and standard deviation for each model
+    metrics_dict = {
+        'Model': all_model_names,  # Model names
+        'Accuracy': all_accuracies,
+        'Precision': all_precisions,
+        'Recall': all_recalls,
+        'F1-score': all_f1_scores,
+        'AUC': all_aucs
+    }
+
+    # Create a DataFrame to store all the metrics for plotting boxplots
+    metrics_df = pd.DataFrame(metrics_dict)
+
+    # Calculate the mean and standard deviation for each model
+    metrics_mean_std = pd.DataFrame({
+        'Model': metrics_df['Model'],
+        'Accuracy Mean': metrics_df['Accuracy'].mean(),
+        'Accuracy Std': metrics_df['Accuracy'].std(),
+        'Precision Mean': metrics_df['Precision'].mean(),
+        'Precision Std': metrics_df['Precision'].std(),
+        'Recall Mean': metrics_df['Recall'].mean(),
+        'Recall Std': metrics_df['Recall'].std(),
+        'F1-score Mean': metrics_df['F1-score'].mean(),
+        'F1-score Std': metrics_df['F1-score'].std(),
+        'AUC Mean': metrics_df['AUC'].mean(),
+        'AUC Std': metrics_df['AUC'].std()
+    })
+    
+    # Plotting boxplots with mean and std values
+    fig, axes = plt.subplots(1, 5, figsize=(20, 5))
+
+    # Accuracy Boxplot
+    sns.boxplot(x='Model', y='Accuracy', data=metrics_df, ax=axes[0], palette="Set3")
+    axes[0].scatter(metrics_df['Model'], metrics_df['Accuracy'].mean(), color='red', label='Mean', zorder=5)
+    axes[0].set_title('Accuracy')
+    axes[0].set_ylabel('Accuracy')
+
+    # Precision Boxplot
+    sns.boxplot(x='Model', y='Precision', data=metrics_df, ax=axes[1], palette="Set3")
+    axes[1].scatter(metrics_df['Model'], metrics_df['Precision'].mean(), color='red', label='Mean', zorder=5)
+    axes[1].set_title('Precision')
+    axes[1].set_ylabel('Precision')
+
+    # Recall Boxplot
+    sns.boxplot(x='Model', y='Recall', data=metrics_df, ax=axes[2], palette="Set3")
+    axes[2].scatter(metrics_df['Model'], metrics_df['Recall'].mean(), color='red', label='Mean', zorder=5)
+    axes[2].set_title('Recall')
+    axes[2].set_ylabel('Recall')
+
+    # F1-score Boxplot
+    sns.boxplot(x='Model', y='F1-score', data=metrics_df, ax=axes[3], palette="Set3")
+    axes[3].scatter(metrics_df['Model'], metrics_df['F1-score'].mean(), color='red', label='Mean', zorder=5)
+    axes[3].set_title('F1-score')
+    axes[3].set_ylabel('F1-score')
+
+    # AUC Boxplot
+    sns.boxplot(x='Model', y='AUC', data=metrics_df, ax=axes[4], palette="Set3")
+    axes[4].scatter(metrics_df['Model'], metrics_df['AUC'].mean(), color='red', label='Mean', zorder=5)
+    axes[4].set_title('AUC')
+    axes[4].set_ylabel('AUC')
+
+    # Show legend for means
+    for ax in axes:
+        ax.legend()
+
+    plt.tight_layout()
+
+    # Ensure the reproducibility folder exists
+    reproducibility_folder = os.path.join(save_folder, "reproducibility")
+    os.makedirs(reproducibility_folder, exist_ok=True)
+
+    # Save the boxplot figure inside the reproducibility folder
+    boxplot_save_path = os.path.join(reproducibility_folder, "all_models_boxplots_with_mean_and_std.png")
+    plt.savefig(boxplot_save_path)
+
+    # Optionally save all evaluation results to CSV
     evaluation_df_file = os.path.join(save_folder, "all_evaluation_results.csv")
-    evaluation_df.to_csv(evaluation_df_file, index=False)
+    metrics_df.to_csv(evaluation_df_file, index=False)
     print(f"Saved all evaluation results to {evaluation_df_file}")
 
 
@@ -275,10 +349,11 @@ if mode == 0:
     transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
     dataset = StandardImageDataset(annotated_csv, img_list, transform=transform)
     # Set up folder to save models
+    save_curve_folder = "roc_curve_plots"
     save_folder = "save_evaluations"
     os.makedirs(save_folder, exist_ok=True)
     # You can now filter the dataset again based on these indices if needed
-    val_subset_indices = torch.load(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\validation_data\val_subset_indices_fold1.pth")
+    val_subset_indices = torch.load(r"C:\Users\larar\OneDrive\Documentos\Escritorio\Histopathological_Diagnosis-5\validation_and_training_data\val_subset_info_fold1.pth")
     val_subset = Subset(dataset, val_subset_indices['val_indices'])
     # Create the validation DataLoader using the same batch size and shuffle settings
     val_loader = DataLoader(val_subset, batch_size=32, shuffle=False)
@@ -287,4 +362,4 @@ if mode == 0:
     saved_models = "saved_models"
     # Folder containing the saved models
     # Start evaluating all models
-    evaluate_models(saved_models,save_folder, val_loader, device,mode)
+    evaluate_models(saved_models,save_folder, val_loader, device,mode, save_curve_folder)

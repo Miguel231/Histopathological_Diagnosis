@@ -1,4 +1,5 @@
 import os
+import gc
 import pandas as pd
 import PIL
 from PIL import Image
@@ -340,10 +341,6 @@ if model_decision == 0:
         train_loader = DataLoader(train_subset, batch_size=32, shuffle=False)
         val_loader = DataLoader(val_subset, batch_size=32, shuffle=False)
 
-        # Save the validation indices (from 'val_patient_ids') and the associated dataset (e.g., validation annotations)
-        val_subset_indices = {'val_patient_ids': val_patient_ids, 'val_indices': val_idx}
-        torch.save(val_subset_indices, os.path.join(save_folder1, f"val_subset_indices_fold{fold+1}.pth"))
-
         fold_accuracies[fold + 1] = []
 
         # Loop through each model configuration
@@ -401,8 +398,14 @@ if model_decision == 0:
             filename = (f"{config['model_name']}_{config['num_layers']}layers_"
                         f"{'_'.join(map(str, config['units_per_layer']))}_dropout{config['dropout']}_fold{fold + 1}.pth")
             save_path = os.path.join(save_folder, filename)
+            # Move model to CPU before saving
+            custom_model.to('cpu')
             torch.save(custom_model.state_dict(), save_path)
             print(f"Saved model: {filename}")
+            # Frre cache from GPU
+            torch.cuda.empty_cache()
+            # Free memory from the trash collector
+            gc.collect()
 
 elif model_decision == 1:
     annotations_file = pd.read_csv(r"TRAIN_DATA_cropped.csv")
