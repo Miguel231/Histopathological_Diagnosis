@@ -333,9 +333,6 @@ def evaluate_models(saved_models_folder, save_folder, val_loader, device, mode, 
     boxplot_save_path = os.path.join(reproducibility_folder, "all_models_boxplots_with_mean_and_std.png")
     plt.savefig(boxplot_save_path)
 
-    # Show the boxplots
-    plt.show()
-
     # Optionally save all evaluation results to CSV
     evaluation_df_file = os.path.join(save_folder, "all_evaluation_results.csv")
     metrics_df.to_csv(evaluation_df_file, index=False)
