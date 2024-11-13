@@ -230,10 +230,10 @@ def evaluate_model_with_classifier(model, val_loader, device):
     plt.legend(loc="lower right")
     plt.show()
 
-    # Find the optimal threshold (using the ROC curve)
-    optimal_idx = np.argmax(tpr - fpr)  # Maximizing the difference between TPR and FPR
+    # Calculate the distance from the top-left corner (0,1)
+    distances = np.sqrt((fpr - 0)**2 + (tpr - 1)**2)
+    optimal_idx = np.argmin(distances)
     optimal_threshold = thresholds[optimal_idx]
-    print(f"Optimal threshold for Classifier: {optimal_threshold}")
 
     # Use optimal threshold to classify (thresholding probabilities)
     preds = (all_probs > optimal_threshold).astype(int)
